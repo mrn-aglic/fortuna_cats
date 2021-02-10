@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Cats</title>
+
+    <script type="module" src="/repositories/cats_repository.js"></script>
+    <script type="module" src="/classes/cat.js"></script>
+    <script type="module" src="/classes/catcontainer.js"></script>
+
+    <script type="module">
+
+        // import {Cat} from './classes/cat.js';
+        import {Cats} from './classes/catcontainer.js';
+        import getCats from './repositories/cats_repository.js';
+
+        window.onload = async function (){
+            const catsArr = await getCats();
+            const cats = new Cats(catsArr);
+
+            console.log(cats.getYoungest());
+        }
+    </script>
+</head>
+<body>
+    <div id="carousel-container">
+    </div>
+</body>
+</html>
