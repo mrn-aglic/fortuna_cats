@@ -1,0 +1,14 @@
+{
+  "name": "fortuna_zadatak",
+  "version": "1.0.0",
+  "description": "An assignment for the job position of frontend web developer.",
+  "dependencies": {
+    "node-sass": "^5.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "scss": "node-sass --watch scss -o css"
+  },
+  "author": "",
+  "license": "ISC"
+}
