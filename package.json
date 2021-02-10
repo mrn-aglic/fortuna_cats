@@ -7,8 +7,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "scss": "node-sass --watch scss -o css"
+    "scss": "node-sass --watch stylesheets/scss -o stylesheets/css"
   },
   "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }

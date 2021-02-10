@@ -1,9 +1,9 @@
 'use strict';
 
 export class Cat {
-    constructor(name, img, age, color) {
+    constructor(name, url, age, color) {
         this.name = name;
-        this.img = img;
+        this.url = url;
         this.age = age; // dob mačića je u mjesecima
         this.color = color;
     }
@@ -20,6 +20,6 @@ export class Cat {
     }
 
     compareAge(other){
-        return this.age < other.age ? -1 : this.age == other.age ? 0 : 1;
+        return this.age < other.age ? -1 : this.age === other.age ? 0 : 1;
     }
 }

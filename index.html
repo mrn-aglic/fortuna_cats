@@ -4,6 +4,8 @@
     <meta charset='UTF-8'>
     <title>Cats</title>
 
+    <link rel="stylesheet" href="stylesheets/css/styles.css">
+
     <script type="module" src="/repositories/cats_repository.js"></script>
     <script type="module" src="/classes/cat.js"></script>
     <script type="module" src="/classes/catcontainer.js"></script>
@@ -14,16 +16,47 @@
         import {Cats} from './classes/catcontainer.js';
         import getCats from './repositories/cats_repository.js';
 
-        window.onload = async function (){
+        function createImgFromCat(cat) {
+            const img = document.createElement('img');
+            img.src = cat.url;
+            img.setAttribute('width', '200px');
+            img.setAttribute('height', '200px');
+            return img;
+        }
+
+        function addButtonsToCarousel(carousel) {
+            const prev = document.createElement('div');
+            const next = document.createElement('next');
+
+            prev.setAttribute('class', 'btn-prev');
+            next.setAttribute('next', 'btn-next');
+
+            carousel.appendChild(prev);
+            carousel.appendChild(next);
+        }
+
+        window.onload = async function () {
+            const carousel = document.getElementById('carousel');
+            addButtonsToCarousel(carousel);
+
+            const lastchild = carousel.childNodes[carousel.childNodes.length - 2];
+
             const catsArr = await getCats();
             const cats = new Cats(catsArr);
 
-            console.log(cats.getYoungest());
+            const carouselCats = cats.getYoungest();
+
+            for (let c of carouselCats) {
+                const img = createImgFromCat(c);
+                carousel.insertBefore(img, lastchild);
+                console.log(img)
+            }
         }
     </script>
 </head>
 <body>
-    <div id="carousel-container">
-    </div>
+<div id="carousel-container">
+    <div id="carousel"></div>
+</div>
 </body>
 </html>
