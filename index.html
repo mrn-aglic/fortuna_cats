@@ -5,6 +5,7 @@
     <title>Cats</title>
 
     <link rel="stylesheet" href="stylesheets/css/styles.css">
+    <link rel="stylesheet" href="stylesheets/css/carousel.css">
 
     <script type="module" src="/repositories/cats_repository.js"></script>
     <script type="module" src="/classes/cat.js"></script>
@@ -26,10 +27,10 @@
 
         function addButtonsToCarousel(carousel) {
             const prev = document.createElement('div');
-            const next = document.createElement('next');
+            const next = document.createElement('div');
 
             prev.setAttribute('class', 'btn-prev');
-            next.setAttribute('next', 'btn-next');
+            next.setAttribute('class', 'btn-next');
 
             carousel.appendChild(prev);
             carousel.appendChild(next);
