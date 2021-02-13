@@ -1,0 +1,105 @@
+$containerWidth: 50%;
+$slidewidth: 50%;
+
+%maxwh {
+  max-width: 500px;
+  max-height: 250px;
+}
+
+%slide {
+  height: auto;
+  bottom: 0;
+  position: relative; //absoulute
+}
+
+%btn {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  font-size: 50px;
+  font-weight: bold;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background-color: #f1f1f1;
+  opacity: 50%;
+}
+
+#carousel-container {
+  margin: 0 auto;
+  //overflow: hidden;
+  width: $containerWidth;
+  text-align: center;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+#carousel {
+  margin: 0 auto;
+  position: relative;
+  height: 50vh;
+  display: flex;
+  align-items: flex-end;
+  //justify-content: center;
+  //flex-wrap: wrap;
+}
+
+.slide {
+  @extend %slide;
+  width: $slidewidth;
+  flex: $slidewidth;
+}
+
+.active:hover {
+  //position: relative;
+  //z-index: 999;
+  transition: all 1s;
+  transform: scale(1.05);
+}
+
+.slide-preview {
+  @extend %slide;
+  width: $slidewidth / 2;
+  flex: $slidewidth / 2;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  object-fit: cover;
+  //align-self: flex-end;
+}
+
+.slide-text {
+  color: #f2f2f2;
+  background-color: black;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.d-none {
+  display: none;
+}
+
+.btn-prev {
+  @extend %btn;
+  left: 0;
+}
+
+.btn-next {
+  @extend %btn;
+  right: 0;
+}
+
+.btn-prev:hover, .btn-next:hover {
+  //background-color: #f1f1f1;
+  opacity: 100%;
+}

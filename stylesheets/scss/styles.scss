@@ -4,8 +4,5 @@ $bodyWidth: 100%;
 body{
   background-color: $bgcolor;
   width: $bodyWidth;
-
-  div{
-    width: $bodyWidth;
-  }
+  text-align: center;
 }

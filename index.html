@@ -2,6 +2,8 @@
 <html lang='en'>
 <head>
     <meta charset='UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Cats</title>
 
     <link rel="stylesheet" href="stylesheets/css/styles.css">
@@ -17,47 +19,246 @@
         import {Cats} from './classes/catcontainer.js';
         import getCats from './repositories/cats_repository.js';
 
+        function asSlide(slide) {
+            // slide.classList.add('d-none');
+            slide.classList.remove('slide-preview');
+            slide.classList.add('slide');
+        }
+
+        function preview(slide) {
+            slide.classList.add('slide-preview');
+            show(slide);
+        }
+
+        function removePreview(slide) {
+            slide.classList.remove('slide-preview');
+        }
+
+        function asSlidePreview(slide) {
+            slide.classList.add('slide-preview');
+        }
+
+        function hide(slide) {
+            slide.classList.add('d-none');
+        }
+
+        function show(slide) {
+            slide.classList.remove('d-none');
+        }
+
+        function setActive(slide) {
+            slide.classList.add('active');
+            removePreview(slide);
+            show(slide);
+        }
+
+        function removeActiveState(slide) {
+            slide.classList.remove('active');
+        }
+
+        function isActive(slide) {
+            return slide.classList.contains('active');
+        }
+
         function createImgFromCat(cat) {
             const img = document.createElement('img');
             img.src = cat.url;
-            img.setAttribute('width', '200px');
-            img.setAttribute('height', '200px');
             return img;
         }
 
-        function addButtonsToCarousel(carousel) {
-            const prev = document.createElement('div');
-            const next = document.createElement('div');
+        function createSlide(cat) {
 
-            prev.setAttribute('class', 'btn-prev');
-            next.setAttribute('class', 'btn-next');
+            const img = createImgFromCat(cat);
 
-            carousel.appendChild(prev);
-            carousel.appendChild(next);
+            const container = document.createElement('div');
+            const textNode = document.createElement('div');
+            textNode.innerText = cat.name;
+
+            asSlide(container);
+            hide(container);
+
+            textNode.classList.add('slide-text');
+
+            container.appendChild(img);
+            container.appendChild(textNode);
+
+            return container;
         }
 
-        window.onload = async function () {
-            const carousel = document.getElementById('carousel');
-            addButtonsToCarousel(carousel);
+        function populateCarousel(carousel, slides) {
+            const firstBtn = carousel.querySelector('div.btn');
+            const insert = carousel.childNodes.length === 0 ? carousel.appendChild : slide => carousel.insertBefore(slide, firstBtn);
+            slides.forEach(insert);
+        }
 
-            const lastchild = carousel.childNodes[carousel.childNodes.length - 2];
+        function getLeftAndRight(idx, slides) {
+            const rightIdx = getRightIndex(idx, slides);
+            const leftIdx = getLeftIndex(idx, slides);
+
+            return [slides[leftIdx], slides[rightIdx]];
+        }
+
+        function initSlides(carousel, slides, currIdx = 0) {
+
+            const [left, right] = getLeftAndRight(currIdx, slides);
+            display(slides[currIdx], left, right);
+
+            carousel.insertBefore(right, slides[currIdx]);
+        }
+
+        function display(current, prev, to_display) {
+
+            setActive(current);
+            preview(prev);
+            preview(to_display);
+        }
+
+        function getCurrentIndex(slides) {
+            return slides.findIndex(s => isActive(s));
+        }
+
+        function getCurrentSlide(slides) {
+            return slides.find(s => isActive(s));
+        }
+
+        function getRightIndex(idx, slides) {
+            return idx >= slides.length - 1 ? 0 : idx + 1;
+        }
+
+        function getLeftIndex(idx, slides) {
+            return idx <= 0 ? slides.length - 1 : idx - 1;
+        }
+
+        function repositionPreview(carousel, preview, before) {
+            removePreview(preview);
+            hide(preview);
+            carousel.insertBefore(preview, before);
+        }
+
+        function getElements(getIdxToHide, getIdxToPreview) {
+
+            const carousel = document.getElementById('carousel');
+            const slides = [...carousel.querySelectorAll('.slide')];
+            // const before = carousel.querySelector('div.btn');
+
+            const idx = getCurrentIndex(slides);
+            // removeActiveState(slides[idx]);
+
+            const prev = slides[idx];
+
+            const to_hide = slides[getIdxToHide(idx, slides)];
+
+            const newIdx = getIdxToPreview(idx, slides);
+            const curr = slides[newIdx];
+            const to_display = slides[getIdxToPreview(newIdx, slides)];
+
+            return [carousel, curr, prev, to_display, to_hide]
+
+            // repositionPreview(carousel, to_hide, before);
+            // display(curr, prev, to_display)
+        }
+
+
+        function moveRight() {
+            // move(getLeftIndex, getRightIndex);
+
+            const [carousel, curr, prev, to_display, to_hide] = getElements(getLeftIndex, getRightIndex);
+            const before = carousel.querySelector('div.btn');
+
+            removeActiveState(prev);
+            repositionPreview(carousel, to_hide, before);
+            display(curr, prev, to_display);
+
+            // const carousel = document.getElementById('carousel');
+            // const slides = [...carousel.querySelectorAll('.slide')];
+            // const before = carousel.querySelector('div.btn');
+
+            // const idx = getCurrentIndex(slides);
+            // removeActiveState(slides[idx]);
+            //
+            // const left = slides[idx];
+            //
+            // const old_left = slides[getLeftIndex(idx, slides)];
+            //
+            // const newIdx = getRightIndex(idx, slides);
+            // const curr = slides[newIdx];
+            // const right = slides[getRightIndex(newIdx, slides)];
+            // repositionPreview(carousel, old_left, before);
+            // display(curr, left, right);
+        }
+
+        function moveLeft() {
+            // move(getRightIndex, getLeftIndex);
+            const [carousel, curr, prev, to_display, to_hide] = getElements(getRightIndex, getLeftIndex);
+            const before = curr;
+
+            removeActiveState(prev);
+            repositionPreview(carousel, to_hide, before);
+            display(curr, prev, to_display);
+
+            // const carousel = document.getElementById('carousel');
+            // const slides = [...carousel.querySelectorAll('.slide')];
+            // const before = carousel.querySelector('div.btn');
+
+            // const idx = getCurrentIndex(slides);
+            // removeActiveState(slides[idx]);
+            //
+            // const right = slides[idx];
+            //
+            // const old_right = slides[getRightIndex(idx, slides)];
+            //
+            // const newIdx = getLeftIndex(idx, slides);
+            // const curr = slides[newIdx];
+            // const left = slides[getLeftIndex(newIdx, slides)];
+            // repositionPreview(carousel, old_right, curr);
+            // display(curr, right, left);
+        }
+
+        window.moveRight = moveRight;
+        window.moveLeft = moveLeft;
+        window.onload = async function () {
 
             const catsArr = await getCats();
             const cats = new Cats(catsArr);
 
-            const carouselCats = cats.getYoungest();
+            const carouselCats = cats.getYoungest(3);
+            const carousel = document.getElementById('carousel');
 
-            for (let c of carouselCats) {
-                const img = createImgFromCat(c);
-                carousel.insertBefore(img, lastchild);
-                console.log(img)
-            }
+            const slides = carouselCats.map(c => createSlide(c));
+            console.log(slides)
+            populateCarousel(carousel, slides);
+            initSlides(carousel, slides, 0);
+
+            // console.log(moveRight)
+            // const [right, left] = (function () {
+            //
+            //     let currentIndex = 0;
+            //     initSlides(slides);
+            //
+            //     const right = () => {
+            //         currentIndex++;
+            //         displayNext(currentIndex);
+            //     }
+            //     const left = () => {
+            //         currentIndex--;
+            //         displayPrev(currentIndex);
+            //     }
+            //
+            //     return [right, left];
+            // })();
         }
     </script>
 </head>
 <body>
 <div id="carousel-container">
-    <div id="carousel"></div>
+    <div id="carousel">
+        <div class="btn btn-prev" onclick="moveLeft()">
+            <span class="arrow">&#10094;</span>
+        </div>
+        <div class="btn btn-next" onclick="moveRight()">
+            <span class="arrow">&#10095;</span>
+        </div>
+    </div>
 </div>
 </body>
 </html>

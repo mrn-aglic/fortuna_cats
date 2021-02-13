@@ -19,10 +19,9 @@ function paramsToQueryString(params) {
     return Object.entries(params).map(p => `${p[0]}=${p[1]}`).join('&');
 }
 
-async function getCats(num = 90) {
+async function getCats(num = 90, localimgs = false) {
 
     const colors = choice(num);
-    console.log(colors)
 
     const qsurl = `${url}?${paramsToQueryString({limit: num})}`;
     const response = await fetch(qsurl, {
