@@ -1,21 +1,18 @@
 $containerWidth: 50%;
 $slidewidth: 50%;
 
-%maxwh {
-  max-width: 500px;
-  max-height: 250px;
-}
-
 %slide {
-  height: auto;
+  height: 100%;
+  position: relative;
   bottom: 0;
-  position: relative; //absoulute
+  top: 0;
 }
 
 %btn {
-  cursor: pointer;
   position: absolute;
-  top: 50%;
+  color: #000;
+  cursor: pointer;
+  top: 25%;
   font-size: 50px;
   font-weight: bold;
   height: 50px;
@@ -24,10 +21,26 @@ $slidewidth: 50%;
   transform: translateY(-50%);
   background-color: #f1f1f1;
   opacity: 50%;
+  text-decoration: none;
+}
+
+%slide-preview-after {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+}
+
+.d-none {
+  display: none;
 }
 
 #carousel-container {
   margin: 0 auto;
+  height: 50vh;
   //overflow: hidden;
   width: $containerWidth;
   text-align: center;
@@ -39,39 +52,77 @@ $slidewidth: 50%;
 
 #carousel {
   margin: 0 auto;
+  height: 100%;
   position: relative;
-  height: 50vh;
   display: flex;
   align-items: flex-end;
   //justify-content: center;
   //flex-wrap: wrap;
 }
 
+.carousel:before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 82%;
+  left: 0;
+  content: "";
+  display: block;
+  background-color: #fff;
+  z-index: 2;
+}
+
+.carousel:after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 82%;
+  content: "";
+  display: block;
+  background-color: #fff;
+  opacity: 1;
+  z-index: 2;
+}
+
+
 .slide {
   @extend %slide;
   width: $slidewidth;
   flex: $slidewidth;
-}
 
-.active:hover {
-  //position: relative;
-  //z-index: 999;
-  transition: all 1s;
-  transform: scale(1.05);
+  img {
+    //max-width: 100%;
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    vertical-align: bottom;
+    object-fit: cover;
+    //align-self: flex-end;
+  }
 }
 
 .slide-preview {
   @extend %slide;
-  width: $slidewidth / 2;
-  flex: $slidewidth / 2;
+  width: $slidewidth;
+  flex: $slidewidth;
+  mix-blend-mode: hard-light;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  vertical-align: middle;
-  object-fit: cover;
-  //align-self: flex-end;
+.slide-preview-right:after {
+  @extend %slide-preview-after;
+  background: linear-gradient(to right, transparent 0%, 30%, gray 90%);
+}
+
+.slide-preview-left:after {
+  @extend %slide-preview-after;
+  background: linear-gradient(to left, transparent 0%, 30%, gray 90%);
+}
+
+.active:hover {
+  transition: all 1s;
+  transform: scale(1.05);
+  overflow: visible;
 }
 
 .slide-text {
@@ -85,21 +136,41 @@ img {
   text-align: center;
 }
 
-.d-none {
-  display: none;
-}
-
 .btn-prev {
   @extend %btn;
-  left: 0;
+  left: 30%;
 }
 
 .btn-next {
   @extend %btn;
-  right: 0;
+  right: 30%;
 }
 
 .btn-prev:hover, .btn-next:hover {
-  //background-color: #f1f1f1;
-  opacity: 100%;
+  opacity: 1;
+}
+
+.testing {
+  width: 300px;
+  height: 300px;
+  color: red;
+  overflow: hidden;
+  position: relative;
+  mix-blend-mode: hard-light;
+}
+
+.testing > img {
+  object-fit: scale-down;
+  width: 100%;
+}
+
+.testing::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to left, transparent 50%, gray);
+  pointer-events: none;
 }

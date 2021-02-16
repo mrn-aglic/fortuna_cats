@@ -32,6 +32,16 @@
 
         function removePreview(slide) {
             slide.classList.remove('slide-preview');
+            slide.classList.remove('slide-preview-left');
+            slide.classList.remove('slide-preview-right');
+        }
+
+        function leftPreview(slide) {
+            slide.classList.add('slide-preview-left');
+        }
+
+        function rightPreview(slide) {
+            slide.classList.add('slide-preview-right');
         }
 
         function asSlidePreview(slide) {
@@ -92,8 +102,8 @@
         }
 
         function getLeftAndRight(idx, slides) {
-            const rightIdx = getRightIndex(idx, slides);
             const leftIdx = getLeftIndex(idx, slides);
+            const rightIdx = getRightIndex(idx, slides);
 
             return [slides[leftIdx], slides[rightIdx]];
         }
@@ -103,14 +113,20 @@
             const [left, right] = getLeftAndRight(currIdx, slides);
             display(slides[currIdx], left, right);
 
-            carousel.insertBefore(right, slides[currIdx]);
+            leftPreview(left);
+            rightPreview(right);
+            carousel.insertBefore(left, slides[currIdx]);
         }
 
         function display(current, prev, to_display) {
-
             setActive(current);
             preview(prev);
             preview(to_display);
+        }
+
+        function hidePreview(preview) {
+            removePreview(preview);
+            hide(preview);
         }
 
         function getCurrentIndex(slides) {
@@ -129,20 +145,12 @@
             return idx <= 0 ? slides.length - 1 : idx - 1;
         }
 
-        function repositionPreview(carousel, preview, before) {
-            removePreview(preview);
-            hide(preview);
-            carousel.insertBefore(preview, before);
-        }
-
         function getElements(getIdxToHide, getIdxToPreview) {
 
             const carousel = document.getElementById('carousel');
             const slides = [...carousel.querySelectorAll('.slide')];
-            // const before = carousel.querySelector('div.btn');
 
             const idx = getCurrentIndex(slides);
-            // removeActiveState(slides[idx]);
 
             const prev = slides[idx];
 
@@ -153,65 +161,33 @@
             const to_display = slides[getIdxToPreview(newIdx, slides)];
 
             return [carousel, curr, prev, to_display, to_hide]
-
-            // repositionPreview(carousel, to_hide, before);
-            // display(curr, prev, to_display)
         }
 
-
         function moveRight() {
-            // move(getLeftIndex, getRightIndex);
-
             const [carousel, curr, prev, to_display, to_hide] = getElements(getLeftIndex, getRightIndex);
-            const before = carousel.querySelector('div.btn');
 
             removeActiveState(prev);
-            repositionPreview(carousel, to_hide, before);
+            hidePreview(to_hide);
+
+            rightPreview(to_display);
+            leftPreview(prev);
+
+            carousel.appendChild(to_hide);
             display(curr, prev, to_display);
-
-            // const carousel = document.getElementById('carousel');
-            // const slides = [...carousel.querySelectorAll('.slide')];
-            // const before = carousel.querySelector('div.btn');
-
-            // const idx = getCurrentIndex(slides);
-            // removeActiveState(slides[idx]);
-            //
-            // const left = slides[idx];
-            //
-            // const old_left = slides[getLeftIndex(idx, slides)];
-            //
-            // const newIdx = getRightIndex(idx, slides);
-            // const curr = slides[newIdx];
-            // const right = slides[getRightIndex(newIdx, slides)];
-            // repositionPreview(carousel, old_left, before);
-            // display(curr, left, right);
         }
 
         function moveLeft() {
-            // move(getRightIndex, getLeftIndex);
             const [carousel, curr, prev, to_display, to_hide] = getElements(getRightIndex, getLeftIndex);
             const before = curr;
 
             removeActiveState(prev);
-            repositionPreview(carousel, to_hide, before);
+            hidePreview(to_hide);
+
+            leftPreview(to_display);
+            rightPreview(prev);
+
+            carousel.insertBefore(to_hide, before);
             display(curr, prev, to_display);
-
-            // const carousel = document.getElementById('carousel');
-            // const slides = [...carousel.querySelectorAll('.slide')];
-            // const before = carousel.querySelector('div.btn');
-
-            // const idx = getCurrentIndex(slides);
-            // removeActiveState(slides[idx]);
-            //
-            // const right = slides[idx];
-            //
-            // const old_right = slides[getRightIndex(idx, slides)];
-            //
-            // const newIdx = getLeftIndex(idx, slides);
-            // const curr = slides[newIdx];
-            // const left = slides[getLeftIndex(newIdx, slides)];
-            // repositionPreview(carousel, old_right, curr);
-            // display(curr, right, left);
         }
 
         window.moveRight = moveRight;
@@ -229,36 +205,42 @@
             populateCarousel(carousel, slides);
             initSlides(carousel, slides, 0);
 
-            // console.log(moveRight)
-            // const [right, left] = (function () {
-            //
-            //     let currentIndex = 0;
-            //     initSlides(slides);
-            //
-            //     const right = () => {
-            //         currentIndex++;
-            //         displayNext(currentIndex);
-            //     }
-            //     const left = () => {
-            //         currentIndex--;
-            //         displayPrev(currentIndex);
-            //     }
-            //
-            //     return [right, left];
-            // })();
+            const debug = true;
+            const intervalTime = 2000;
+
+            setInterval(function () {
+
+                if (debug) return;
+
+                const active = document.querySelector('.active:hover');
+                const isActiveHovered = active !== null;
+
+                if (!isActiveHovered) {
+                    moveRight()
+                }
+            }, intervalTime);
         }
     </script>
 </head>
 <body>
 <div id="carousel-container">
     <div id="carousel">
-        <div class="btn btn-prev" onclick="moveLeft()">
-            <span class="arrow">&#10094;</span>
-        </div>
-        <div class="btn btn-next" onclick="moveRight()">
-            <span class="arrow">&#10095;</span>
-        </div>
+        <!--        <div class="btn btn-prev" onclick="moveLeft()">-->
+        <!--            <span class="arrow">&#10094;</span>-->
+        <!--        </div>-->
+        <!--        <div class="btn btn-next" onclick="moveRight()">-->
+        <!--            <span class="arrow">&#10095;</span>-->
+        <!--        </div>-->
     </div>
+    <div class="btn btn-prev" onclick="moveLeft()">
+        <span class="arrow">&#10094;</span>
+    </div>
+    <div class="btn btn-next" onclick="moveRight()">
+        <span class="arrow">&#10095;</span>
+    </div>
+</div>
+<div class="testing">
+    <img src="https://static.toiimg.com/photo/72975551.cms"/>
 </div>
 </body>
 </html>

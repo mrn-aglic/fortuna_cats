@@ -4,5 +4,6 @@ $bodyWidth: 100%;
 body{
   background-color: $bgcolor;
   width: $bodyWidth;
+  overflow-x: hidden;
   text-align: center;
 }
