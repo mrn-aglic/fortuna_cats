@@ -19,7 +19,7 @@ export class Cat {
         return {years: years, months: months};
     }
 
-    compareAge(other){
+    compareAge(other) {
         return this.age < other.age ? -1 : this.age === other.age ? 0 : 1;
     }
 }

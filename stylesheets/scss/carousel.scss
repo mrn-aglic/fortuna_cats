@@ -15,6 +15,7 @@ $slidewidth: 50%;
   top: 25%;
   font-size: 50px;
   font-weight: bold;
+  font-family: initial;
   height: 50px;
   width: 50px;
   border-radius: 50%;
@@ -60,36 +61,11 @@ $slidewidth: 50%;
   //flex-wrap: wrap;
 }
 
-.carousel:before {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 82%;
-  left: 0;
-  content: "";
-  display: block;
-  background-color: #fff;
-  z-index: 2;
-}
-
-.carousel:after {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 82%;
-  content: "";
-  display: block;
-  background-color: #fff;
-  opacity: 1;
-  z-index: 2;
-}
-
-
 .slide {
   @extend %slide;
   width: $slidewidth;
   flex: $slidewidth;
+  transition: all 0.5s ease-in-out;
 
   img {
     //max-width: 100%;
@@ -104,8 +80,8 @@ $slidewidth: 50%;
 
 .slide-preview {
   @extend %slide;
-  width: $slidewidth;
-  flex: $slidewidth;
+  width: $slidewidth / 2;
+  flex: $slidewidth / 2;
   mix-blend-mode: hard-light;
 }
 
@@ -148,29 +124,4 @@ $slidewidth: 50%;
 
 .btn-prev:hover, .btn-next:hover {
   opacity: 1;
-}
-
-.testing {
-  width: 300px;
-  height: 300px;
-  color: red;
-  overflow: hidden;
-  position: relative;
-  mix-blend-mode: hard-light;
-}
-
-.testing > img {
-  object-fit: scale-down;
-  width: 100%;
-}
-
-.testing::after {
-  position: absolute;
-  content: "";
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  background: linear-gradient(to left, transparent 50%, gray);
-  pointer-events: none;
 }

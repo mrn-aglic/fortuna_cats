@@ -1,9 +1,14 @@
 $bgcolor: white;
 $bodyWidth: 100%;
 
-body{
+body {
   background-color: $bgcolor;
   width: $bodyWidth;
   overflow-x: hidden;
   text-align: center;
+  font-family:  -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";;
+}
+
+.row {
+  margin-bottom: 2%;
 }
