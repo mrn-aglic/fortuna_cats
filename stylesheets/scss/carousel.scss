@@ -1,5 +1,7 @@
-$containerWidth: 50%;
+$containerWidth: 70%;
 $slidewidth: 50%;
+$containerScreenLimit: 1028px;
+$btnDist: 20%;
 
 %slide {
   height: 100%;
@@ -12,14 +14,14 @@ $slidewidth: 50%;
   position: absolute;
   color: #000;
   cursor: pointer;
-  top: 25%;
+  top: 30%;
   font-size: 50px;
   font-weight: bold;
   font-family: initial;
   height: 50px;
   width: 50px;
   border-radius: 50%;
-  transform: translateY(-50%);
+  transform: translateY(50%);
   background-color: #f1f1f1;
   opacity: 50%;
   text-decoration: none;
@@ -40,6 +42,7 @@ $slidewidth: 50%;
 }
 
 #carousel-container {
+  position: relative;
   margin: 0 auto;
   height: 50vh;
   //overflow: hidden;
@@ -75,6 +78,12 @@ $slidewidth: 50%;
     vertical-align: bottom;
     object-fit: cover;
     //align-self: flex-end;
+  }
+}
+
+@media screen and (max-width: $containerScreenLimit) {
+  #carousel-container {
+    width: $containerWidth + 20%;
   }
 }
 
@@ -114,14 +123,26 @@ $slidewidth: 50%;
 
 .btn-prev {
   @extend %btn;
-  left: 30%;
+  left: $btnDist;
 }
 
 .btn-next {
   @extend %btn;
-  right: 30%;
+  right: $btnDist;
 }
 
 .btn-prev:hover, .btn-next:hover {
   opacity: 1;
+}
+
+@media screen and (max-width: 600px) {
+  .slide-preview {
+    display: none;
+  }
+  //.btn-next {
+  //  right: ($btnDist / 3);
+  //}
+  //.btn-prev {
+  //  left: ($btnDist / 3);
+  //}
 }
