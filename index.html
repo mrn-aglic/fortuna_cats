@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="stylesheets/css/styles.css">
     <link rel="stylesheet" href="stylesheets/css/carousel.css">
     <link rel="stylesheet" href="stylesheets/css/cards.css">
+    <link rel="stylesheet" href="stylesheets/css/menu.css">
 
     <script type="module" src="/repositories/cats_repository.js"></script>
     <script type="module" src="/classes/cat.js"></script>
@@ -204,6 +205,25 @@
             }, intervalTime);
         }
 
+        function sort(cardsContainer) {
+
+            const cmpr = {
+                '<': (a, b) => a - b,
+                '>': (a, b) => b - a
+            };
+
+            const byV = document.querySelector('input[name="feature"]:checked').value;
+            const orderV = document.querySelector('input[name="order"]:checked').value;
+
+            const by = c => c[byV];
+            const order = cmpr[orderV];
+
+            const orderBy = (a, b) => order(by(a), by(b));
+
+            cardsContainer.sort(orderBy);
+        }
+
+
         window.moveRight = moveRight;
         window.moveLeft = moveLeft;
         window.onload = async function () {
@@ -221,10 +241,21 @@
 
             const cards = document.getElementById('cards');
             const cardsContainer = new CardsContainer(cards, cats);
-            cardsContainer.appendNext(10);
+            cardsContainer.appendNext(20);
+
+            const result = document.getElementById('result');
+            result.innerText = cardsContainer.getSize();
 
             window.loadCats = function () {
+                cardsContainer.appendNext(20);
+                if (cardsContainer.getSize() >= cats.getSize()) {
+                    document.querySelector('.btn-load').style.display = 'none';
+                }
+
+                result.innerText = cardsContainer.getSize();
             }
+
+            window.sort = () => sort(cardsContainer);
         }
     </script>
 </head>
@@ -233,11 +264,48 @@
     <div id="carousel-container">
         <div id="carousel">
         </div>
-        <div class="btn btn-prev" onclick="moveLeft()">
+        <div class="btn-prev" onclick="moveLeft()">
             <span class="arrow">&#10094;</span>
         </div>
-        <div class="btn btn-next" onclick="moveRight()">
+        <div class="btn-next" onclick="moveRight()">
             <span class="arrow">&#10095;</span>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="display-menu">
+        <div id="sort-menu">
+            <div id="sort-by">
+                <span>Sortiraj prema:</span>
+                <div class="radio-control">
+                    <input name="feature" id="name-radio" value="name" type="radio"/>
+                    <label for="name-radio">Imenu</label>
+                </div>
+                <div class="radio-control">
+                    <input name="feature" id="age-radio" value="age" type="radio" checked/>
+                    <label for="age-radio">Dobi</label>
+                </div>
+            </div>
+            <div id="sort-order">
+                <span> Sortiraj: </span>
+                <div class="radio-control">
+                    <input name="order" id="order-asc" value="<" type="radio" checked/>
+                    <label for="order-asc">Uzlazno</label>
+                </div>
+                <div class="radio-control">
+                    <input name="order" id="order-desc" value=">" type="radio"/>
+                    <label for="order-desc">Silazno</label>
+                </div>
+            </div>
+            <div class="button-container">
+                <a class="sort-btn" onclick="sort()">Sortiraj</a>
+            </div>
+        </div>
+        <div id="filter-menu">
+            <div>
+                <span>Rezultata:</span>
+                <span id="result"></span>
+            </div>
         </div>
     </div>
 </div>

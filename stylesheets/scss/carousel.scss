@@ -10,7 +10,7 @@ $btnDist: 20%;
   top: 0;
 }
 
-%btn {
+%nav-btn {
   position: absolute;
   color: #000;
   cursor: pointer;
@@ -37,15 +37,10 @@ $btnDist: 20%;
   pointer-events: none;
 }
 
-.d-none {
-  display: none;
-}
-
 #carousel-container {
   position: relative;
   margin: 0 auto;
   height: 50vh;
-  //overflow: hidden;
   width: $containerWidth;
   text-align: center;
 
@@ -60,8 +55,6 @@ $btnDist: 20%;
   position: relative;
   display: flex;
   align-items: flex-end;
-  //justify-content: center;
-  //flex-wrap: wrap;
 }
 
 .slide {
@@ -71,13 +64,11 @@ $btnDist: 20%;
   transition: all 0.5s ease-in-out;
 
   img {
-    //max-width: 100%;
     height: 100%;
     width: 100%;
     max-height: 100%;
     vertical-align: bottom;
     object-fit: cover;
-    //align-self: flex-end;
   }
 }
 
@@ -122,12 +113,12 @@ $btnDist: 20%;
 }
 
 .btn-prev {
-  @extend %btn;
+  @extend %nav-btn;
   left: $btnDist;
 }
 
 .btn-next {
-  @extend %btn;
+  @extend %nav-btn;
   right: $btnDist;
 }
 
@@ -139,10 +130,10 @@ $btnDist: 20%;
   .slide-preview {
     display: none;
   }
-  //.btn-next {
-  //  right: ($btnDist / 3);
-  //}
-  //.btn-prev {
-  //  left: ($btnDist / 3);
-  //}
+  .btn-prev {
+    left: $btnDist / 2;
+  }
+  .btn-next {
+    right: $btnDist / 2;
+  }
 }

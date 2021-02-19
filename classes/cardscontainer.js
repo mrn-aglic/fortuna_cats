@@ -26,19 +26,24 @@ export class CardsContainer {
             return box;
         }
 
-        function createSpan(text, cssClass) {
-            const span = document.createElement('span');
-            span.innerText = text;
-            span.classList.add(cssClass);
-            return span;
+        function createEl(text, cssClass, el, attrs) {
+            const obj = document.createElement(el);
+            obj.innerText = text;
+            obj.classList.add(cssClass);
+
+            for (let k in attrs) {
+                obj.setAttribute(k, attrs[k]);
+            }
+
+            return obj;
         }
 
         function createDetailRow(dat) {
             const {text, data} = dat;
 
             const div = document.createElement('div');
-            const label = createSpan(text, 'label');
-            const detail = createSpan(data, 'detail');
+            const label = createEl(text, 'label', 'label', {});
+            const detail = createEl(data, 'detail', 'span', {});
 
             div.appendChild(label);
             div.appendChild(detail);
@@ -81,25 +86,47 @@ export class CardsContainer {
         return details;
     }
 
+    createAdoptButton() {
+        const btn = document.createElement('a');
+        const container = document.createElement('div');
+
+        container.classList.add('adopt-button-container');
+        btn.innerText = 'Posvoji';
+        btn.classList.add('btn');
+
+        container.appendChild(btn);
+
+        return container;
+    }
+
     createCard(cat) {
         const img = this.createImgFromCat(cat);
 
         const container = document.createElement('div');
         const details = this.createDetailsSection(cat);
+        const button = this.createAdoptButton();
 
         container.classList.add('card');
 
         container.appendChild(img);
         container.appendChild(details);
+        container.appendChild(button);
 
         return container;
     }
 
     appendNext(num) {
         const start = this.getSize();
-        const loaded = this.cats.getNext(start, num);
+        const end = start + num;
+        const loaded = this.cats.getNext(start, end);
         const cardCats = loaded.map(c => this.createCard(c));
 
         cardCats.forEach(c => this.el.appendChild(c));
+    }
+
+    sort(orderBy) {
+        const loaded = this.getSize();
+
+        this.cats = [...cats].sort(orderBy);
     }
 }

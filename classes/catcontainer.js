@@ -9,8 +9,8 @@ export class Cats {
         return this.cats.length;
     }
 
-    getNext(from = 0, num = 20) {
-        return [...this.cats].slice(from, num);
+    getNext(from, end) {
+        return [...this.cats].slice(from, end);
     }
 
     getYoungest(num = 4) {
