@@ -19,10 +19,7 @@ function paramsToQueryString(params) {
     return Object.entries(params).map(p => `${p[0]}=${p[1]}`).join('&');
 }
 
-async function getCats(num = 90, localimgs = false) {
-
-    const colors = choice(num);
-
+async function getCatsFromApi(num) {
     const qsurl = `${url}?${paramsToQueryString({limit: num})}`;
     const response = await fetch(qsurl, {
         method: 'GET',
@@ -32,8 +29,48 @@ async function getCats(num = 90, localimgs = false) {
         }
     });
 
-    const json = await response.json();
-    return json.map((j, i) => new Cat(catnames[i], j.url, Math.floor(Math.random() * Math.floor(191)) + 2, colors[i]));
+    return await response.json();
+}
+
+async function loadFromLocal(num) {
+
+    async function sendHttpRequest() {
+        const Http = new XMLHttpRequest();
+        const url = '/imgs';
+        Http.open("GET", url);
+        Http.send();
+
+        if (Http.readyState === XMLHttpRequest.DONE) {
+            return Http;
+        }
+
+        let res;
+        const p = new Promise((r) => res = r);
+        Http.onreadystatechange = () => {
+            if (Http.readyState === XMLHttpRequest.DONE) {
+                res(Http);
+            }
+        }
+        return p;
+    }
+
+    const p = await sendHttpRequest(num);
+    const text = p.responseText;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    const as = [...doc.getElementsByTagName('a')];
+    return as.slice(0, num).map(a => {
+        return {url: `imgs/${a.innerText}`}
+    });
+}
+
+async function getCats(localimgs = false, num = 90) {
+
+    const colors = choice(num);
+
+    const result = localimgs ? await loadFromLocal(num) : await getCatsFromApi(num);
+
+    return result.map((j, i) => new Cat(catnames[i], j.url, Math.floor(Math.random() * Math.floor(191)) + 2, colors[i]));
 }
 
 export default getCats;

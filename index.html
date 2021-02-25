@@ -75,10 +75,6 @@
             slide.classList.remove('active');
         }
 
-        function isActive(slide) {
-            return slide.classList.contains('active');
-        }
-
         function isSlide(el) {
             return el.matches('.slide');
         }
@@ -95,6 +91,9 @@
 
             const container = document.createElement('div');
             const textNode = document.createElement('div');
+
+            // const adoptBtn = document.createElement()
+            
             textNode.innerText = cat.name;
 
             asSlide(container);
@@ -301,7 +300,9 @@
         window.moveLeft = moveLeft;
         window.onload = async function () {
 
-            const catsArr = await getCats();
+            const useLocalImages = new URLSearchParams(window.location.search).get('local') || false;
+
+            const catsArr = await getCats(useLocalImages);
             const cats = new Cats(catsArr);
 
             // for debugging
