@@ -6,6 +6,8 @@
 
     <title>Cats</title>
 
+    <link rel="icon" href="/imgs/favicon.jpg">
+
     <link rel="stylesheet" href="stylesheets/css/styles.css">
     <link rel="stylesheet" href="stylesheets/css/carousel.css">
     <link rel="stylesheet" href="stylesheets/css/cards.css">
@@ -205,11 +207,11 @@
             }, intervalTime);
         }
 
-        function sort(cardsContainer) {
+        function getOrderBy() {
 
             const cmpr = {
-                '<': (a, b) => a - b,
-                '>': (a, b) => b - a
+                '<': (a, b) => isNaN(a) ? a.localeCompare(b) : a - b,
+                '>': (a, b) => isNaN(a) ? b.localeCompare(a) : b - a
             };
 
             const byV = document.querySelector('input[name="feature"]:checked').value;
@@ -218,11 +220,82 @@
             const by = c => c[byV];
             const order = cmpr[orderV];
 
-            const orderBy = (a, b) => order(by(a), by(b));
-
-            cardsContainer.sort(orderBy);
+            return (a, b) => order(by(a), by(b));
         }
 
+        function sort(cardsContainer) {
+            const orderBy = getOrderBy();
+
+            cardsContainer.sort(orderBy, getFilterFunction());
+        }
+
+        function createPredicateFunctionFromCheckboxes() {
+            const paramName = 'c';
+
+            const filters = [...document.querySelectorAll('input[name=filter]')];
+            const checked = filters.filter(f => f.checked);
+            const values = checked.map(f => f.value.split(/(<[=>]?|===|>=?)/g));
+
+            if (checked.length === 0) {
+                return (_ => true);
+            }
+
+            const queries = values.map(q => `${paramName}["${q[0]}"] ${q[1]} ${q[2]}`);
+            const predicate = queries.join(' &&');
+            return new Function(`return function(${paramName}){ return ${predicate}; }`)();
+        }
+
+        function getFilterFunction() {
+            const searchbox = document.querySelector('#search-menu > input');
+            const searchstring = searchbox.value.toLowerCase();
+
+            const searchFilter = c => c.name.toLowerCase().includes(searchstring);
+
+            const f = createPredicateFunctionFromCheckboxes();
+
+            return c => searchFilter(c) && f(c);
+        }
+
+        function filter(cardsContainer) {
+
+            showButton();
+
+            const orderBy = getOrderBy();
+            const p = getFilterFunction();
+            const moreToLoad = cardsContainer.filter(p, orderBy);
+
+            if (!moreToLoad) {
+                hideButton();
+            }
+
+            updateResultNum(cardsContainer);
+        }
+
+        function updateResultNum(cardsContainer) {
+            const result = document.getElementById('result');
+            result.innerText = cardsContainer.getSize();
+        }
+
+        function resetSortMenu() {
+            document.getElementById('age-radio').checked = true;
+            document.getElementById('order-asc').checked = true;
+        }
+
+        function showButton() {
+            document.querySelector('.btn-load').style.display = 'inline-block';
+        }
+
+        function hideButton() {
+            document.querySelector('.btn-load').style.display = 'none';
+        }
+
+        // function search(cardsContainer) {
+        //     const searchbox = document.querySelector('#search-menu > input');
+        //     const searchstring = searchbox.value.toLowerCase();
+        //     cardsContainer.filter(c => c.name.toLowerCase().includes(searchstring));
+        //
+        //     updateResultNum(cardsContainer);
+        // }
 
         window.moveRight = moveRight;
         window.moveLeft = moveLeft;
@@ -230,6 +303,9 @@
 
             const catsArr = await getCats();
             const cats = new Cats(catsArr);
+
+            // for debugging
+            // window.allcats = catsArr;
 
             const carouselCats = cats.getYoungest(3);
             const carousel = document.getElementById('carousel');
@@ -241,21 +317,28 @@
 
             const cards = document.getElementById('cards');
             const cardsContainer = new CardsContainer(cards, cats);
-            cardsContainer.appendNext(20);
+            cardsContainer.clickAppend(20);
 
-            const result = document.getElementById('result');
-            result.innerText = cardsContainer.getSize();
+            updateResultNum(cardsContainer);
 
             window.loadCats = function () {
-                cardsContainer.appendNext(20);
-                if (cardsContainer.getSize() >= cats.getSize()) {
-                    document.querySelector('.btn-load').style.display = 'none';
+                resetSortMenu();
+                const add = 20;
+                const [_, moreToLoad] = cardsContainer.clickAppend(add, getOrderBy(), getFilterFunction());
+                // window.sort();
+
+                if (!moreToLoad || cardsContainer.getSize() >= cats.getSize()) {
+                    hideButton();
                 }
 
-                result.innerText = cardsContainer.getSize();
+                updateResultNum(cardsContainer);
             }
 
             window.sort = () => sort(cardsContainer);
+
+            window.filter = () => filter(cardsContainer);
+
+            // window.search = () => search(cardsContainer);
         }
     </script>
 </head>
@@ -274,9 +357,9 @@
 </div>
 <div class="row">
     <div id="display-menu">
-        <div id="sort-menu">
+        <div id="sort-menu" class="sub-menu">
             <div id="sort-by">
-                <span>Sortiraj prema:</span>
+                <span class="menu-label">Sortiraj prema:</span>
                 <div class="radio-control">
                     <input name="feature" id="name-radio" value="name" type="radio"/>
                     <label for="name-radio">Imenu</label>
@@ -287,7 +370,7 @@
                 </div>
             </div>
             <div id="sort-order">
-                <span> Sortiraj: </span>
+                <span class="menu-label"> Sortiraj: </span>
                 <div class="radio-control">
                     <input name="order" id="order-asc" value="<" type="radio" checked/>
                     <label for="order-asc">Uzlazno</label>
@@ -301,11 +384,35 @@
                 <a class="sort-btn" onclick="sort()">Sortiraj</a>
             </div>
         </div>
-        <div id="filter-menu">
-            <div>
+        <div id="filter-menu" class="sub-menu">
+            <div class="flex-row">
                 <span>Rezultata:</span>
                 <span id="result"></span>
             </div>
+            <div class="filters">
+                <span class="menu-item"> Prikaži samo: </span>
+                <div class="checkbox-container">
+                    <label class="checkbox-label">
+                        <input name="filter" value="age<=6" type="checkbox" onchange="filter()"/>
+                        <span class="checkbox-box">Mačić je mlađi od 6 mjeseci</span>
+                    </label>
+                </div>
+                <div class="checkbox-container">
+                    <label class="checkbox-label">
+                        <input name="filter" value="age<=12" type="checkbox" onchange="filter()"/>
+                        <span class="checkbox-box">Mačić je mlađi od 12 mjeseci</span>
+                    </label>
+                </div>
+                <div class="checkbox-container">
+                    <label class="checkbox-label">
+                        <input name="filter" value="color==='black'" type="checkbox" onchange="filter()"/>
+                        <span class="checkbox-box">Mačić je crne boje</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div id="search-menu" class="sub-menu">
+            <input type="text" placeholder="Pretraga po imenu" onkeyup="filter()"/>
         </div>
     </div>
 </div>
@@ -313,7 +420,7 @@
     <div id="cards-container">
         <div id="cards"></div>
         <div class="button-container">
-            <a class="btn btn-load" onclick="loadCats()">Load more</a>
+            <a class="btn btn-load" onclick="loadCats()">Prikaži više</a>
         </div>
     </div>
 </div>

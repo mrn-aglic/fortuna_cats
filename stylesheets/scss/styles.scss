@@ -18,6 +18,10 @@ body {
   display: none;
 }
 
+.flex-row {
+  flex-basis: 100%;
+}
+
 %button-container {
   margin: $buttonContainerMargin auto;
   text-align: center;

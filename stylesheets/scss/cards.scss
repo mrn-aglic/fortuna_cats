@@ -80,6 +80,8 @@ $autoRowHeight: 20rem + $buttonContainerMargin * 3;
         flex: 9em;
 
         .color-box {
+          border: 1px solid;
+          box-sizing: border-box;
           width: 1em;
           height: 1em;
           border-radius: 1em;

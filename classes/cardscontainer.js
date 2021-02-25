@@ -2,9 +2,15 @@
 
 export class CardsContainer {
     constructor(el, cats) {
-        console.log(el)
         this.el = el;
         this.cats = cats;
+
+        this.loadBy = 20;
+        this.loadClicks = 0;
+    }
+
+    getLoadedNum() {
+        return this.loadClicks * this.loadBy;
     }
 
     getSize() {
@@ -115,18 +121,65 @@ export class CardsContainer {
         return container;
     }
 
-    appendNext(num) {
-        const start = this.getSize();
-        const end = start + num;
-        const loaded = this.cats.getNext(start, end);
-        const cardCats = loaded.map(c => this.createCard(c));
-
+    appendCats(cats) {
+        const cardCats = cats.map(c => this.createCard(c));
         cardCats.forEach(c => this.el.appendChild(c));
     }
 
-    sort(orderBy) {
-        const loaded = this.getSize();
+    getNextForP(start, end, sorted, p) {
+        const pred = p || (_ => true);
+        const filtered = sorted.filter(pred)
+        const moreToLoad = filtered.length > (end - start);
+        return [sorted.filter(pred).slice(start, end), moreToLoad];
+    }
 
-        this.cats = [...cats].sort(orderBy);
+    clickAppend(num, orderby, p) {
+        const start = this.getSize();
+        const end = start + num;
+        const [loaded, moreToLoad] = this.getNextForP(start, end, this.cats.sort(orderby), p);
+        this.appendCats(loaded);
+
+        // const moreToLoad = satisfyCondition > loaded.length;
+
+        // možda poslat obavijest o tome koliko mačića je dodano. Pa ako je 0 ispisat poruku o tome
+        this.loadClicks += 1;
+
+        return [loaded, moreToLoad];
+    }
+
+    refreshView(cats) {
+        this.clear();
+        this.appendCats(cats);
+    }
+
+    clear() {
+        while (this.el.firstChild) {
+            this.el.removeChild(this.el.firstChild);
+        }
+    }
+
+    sort(orderBy, filter) {
+
+        const p = filter || (_ => true);
+
+        const numLoaded = this.getLoadedNum();
+
+        const sorted = this.cats.sort(orderBy);
+        const [loaded, _] = this.getNextForP(0, numLoaded, sorted, p);
+
+        this.refreshView(loaded)
+    }
+
+    filter(p, orderBy) {
+
+        const numLoaded = this.getLoadedNum();
+
+        const sorted = this.cats.sort(orderBy);
+        const [cats, moreToLoad] = this.getNextForP(0, numLoaded, sorted, p);
+        // const cats = this.cats.filter(p).slice(0, numLoaded); // assume we keep the number of loaded cats
+
+        this.refreshView(cats);
+
+        return moreToLoad;
     }
 }
