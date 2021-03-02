@@ -23,6 +23,7 @@
     <script type="module">
 
         import {DOMFactory} from './classes/DOMFactory.js';
+        import {Carousel} from './classes/carousel.js';
         import {Cats} from './classes/catcontainer.js';
         import {CardsContainer} from './classes/cardscontainer.js';
         import getCats from './repositories/cats_repository.js';
@@ -307,18 +308,6 @@
             document.querySelector('.btn-load').style.display = 'none';
         }
 
-        function adopt(el, cats, cardsContainer) {
-            const id = parseInt(el.getAttribute('data-id'));
-            cats.remove(id);
-            cardsContainer.remove(el);
-
-            const carousel = document.getElementById('#carousel');
-            const activeSlide = carousel.querySelector('.active');
-            carousel.removeChild(activeSlide);
-        }
-
-        window.moveRight = moveRight;
-        window.moveLeft = moveLeft;
         window.onload = async function () {
 
             const useLocalImages = new URLSearchParams(window.location.search).get('local') || false;
@@ -329,31 +318,9 @@
             // for debugging
             // window.allcats = catsArr;
 
-            const carouselCats = cats.getYoungest(4);
-            const carousel = document.getElementById('carousel');
-
-            const slides = carouselCats.map(c => createSlide(c));
-
-            for (let slide of slides) {
-                const btn = slide.querySelector('.btn');
-                const id = parseInt(btn.getAttribute('data-id'));
-                btn.onclick = () => cats.remove(id);
-            }
-
-            function removeSlide() {
-                const slide = carousel.querySelector('.active');
-
-                const nextActive = getNext(slide);
-                display(nextActive, getPrev(slide), getNext(nextActive));
-
-                carousel.removeChild(slide);
-            }
-
-            cats.observe(removeSlide);
-
-            populateCarousel(carousel, slides);
-            initSlides(carousel, slides, 0);
-            runCarousel();
+            const carouselEl = document.getElementById('carousel');
+            const carousel = new Carousel(carouselEl, cats);
+            carousel.run();
 
             const cards = document.getElementById('cards');
             const cardsContainer = new CardsContainer(cards, cats);
@@ -376,8 +343,6 @@
             window.sort = () => sort(cardsContainer);
 
             window.filter = () => filter(cardsContainer);
-
-            // document.querySelectorAll('#carousel btn')
         }
     </script>
 </head>
@@ -386,10 +351,10 @@
     <div id="carousel-container">
         <div id="carousel">
         </div>
-        <div class="btn-prev" onclick="moveLeft()">
+        <div class="btn-prev">
             <span class="arrow">&#10094;</span>
         </div>
-        <div class="btn-next" onclick="moveRight()">
+        <div class="btn-next">
             <span class="arrow">&#10095;</span>
         </div>
     </div>

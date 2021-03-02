@@ -9,7 +9,11 @@ export class Cats {
         this.overrideFuncs();
     }
 
-    observe(f){
+    isRemoveEvt(evt) {
+        return evt === 'remove';
+    }
+
+    observe(f) {
         this.observers.push(f);
     }
 
@@ -26,7 +30,7 @@ export class Cats {
         this.cats.splice = function (idx, num, items) {
             const result = Array.prototype.splice.apply(self.cats, [idx, num, items]);
             console.log(result);
-            for(let obs of self.observers) {
+            for (let obs of self.observers) {
                 obs(result, 'remove');
             }
 
@@ -60,7 +64,6 @@ export class Cats {
 
     remove(id) {
         const idx = this.cats.findIndex(c => c.id === id);
-        console.log(idx)
         this.cats.splice(idx, 1);
     }
 }

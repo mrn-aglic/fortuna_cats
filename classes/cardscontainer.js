@@ -14,14 +14,8 @@ export class CardsContainer {
 
         this.cats.observe(function (result, evt) {
 
-            switch (evt) {
-                case 'sort':
-                    self.sort(result);
-                    break;
-                case 'remove':
-                    console.log('got remove: ' + result);
-                    self.remove(result);
-                    break;
+            if(self.cats.isRemoveEvt(evt)){
+                self.remove(result);
             }
         })
     }
