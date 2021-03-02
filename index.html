@@ -14,12 +14,15 @@
     <link rel="stylesheet" href="stylesheets/css/menu.css">
 
     <script type="module" src="/repositories/cats_repository.js"></script>
+    <script type="module" src="/classes/DOMFactory.js"></script>
+    <script type="module" src="/classes/carousel.js"></script>
     <script type="module" src="/classes/cat.js"></script>
     <script type="module" src="/classes/catcontainer.js"></script>
     <script type="module" src="/classes/cardscontainer.js"></script>
 
     <script type="module">
 
+        import {DOMFactory} from './classes/DOMFactory.js';
         import {Cats} from './classes/catcontainer.js';
         import {CardsContainer} from './classes/cardscontainer.js';
         import getCats from './repositories/cats_repository.js';
@@ -85,6 +88,21 @@
             return img;
         }
 
+        function createAdoptButton(id) {
+            const btn = document.createElement('a');
+            const container = document.createElement('div');
+
+            container.classList.add('adopt-button-container');
+            btn.innerText = 'Posvoji';
+            btn.classList.add('btn');
+
+            btn.setAttribute('data-id', id);
+
+            container.appendChild(btn);
+
+            return container;
+        }
+
         function createSlide(cat) {
 
             const img = createImgFromCat(cat);
@@ -92,8 +110,8 @@
             const container = document.createElement('div');
             const textNode = document.createElement('div');
 
-            // const adoptBtn = document.createElement()
-            
+            const adoptBtn = createAdoptButton(cat.id);
+
             textNode.innerText = cat.name;
 
             asSlide(container);
@@ -102,6 +120,7 @@
             textNode.classList.add('slide-text');
 
             container.appendChild(img);
+            container.appendChild(adoptBtn);
             container.appendChild(textNode);
 
             return container;
@@ -288,13 +307,15 @@
             document.querySelector('.btn-load').style.display = 'none';
         }
 
-        // function search(cardsContainer) {
-        //     const searchbox = document.querySelector('#search-menu > input');
-        //     const searchstring = searchbox.value.toLowerCase();
-        //     cardsContainer.filter(c => c.name.toLowerCase().includes(searchstring));
-        //
-        //     updateResultNum(cardsContainer);
-        // }
+        function adopt(el, cats, cardsContainer) {
+            const id = parseInt(el.getAttribute('data-id'));
+            cats.remove(id);
+            cardsContainer.remove(el);
+
+            const carousel = document.getElementById('#carousel');
+            const activeSlide = carousel.querySelector('.active');
+            carousel.removeChild(activeSlide);
+        }
 
         window.moveRight = moveRight;
         window.moveLeft = moveLeft;
@@ -308,10 +329,28 @@
             // for debugging
             // window.allcats = catsArr;
 
-            const carouselCats = cats.getYoungest(3);
+            const carouselCats = cats.getYoungest(4);
             const carousel = document.getElementById('carousel');
 
             const slides = carouselCats.map(c => createSlide(c));
+
+            for (let slide of slides) {
+                const btn = slide.querySelector('.btn');
+                const id = parseInt(btn.getAttribute('data-id'));
+                btn.onclick = () => cats.remove(id);
+            }
+
+            function removeSlide() {
+                const slide = carousel.querySelector('.active');
+
+                const nextActive = getNext(slide);
+                display(nextActive, getPrev(slide), getNext(nextActive));
+
+                carousel.removeChild(slide);
+            }
+
+            cats.observe(removeSlide);
+
             populateCarousel(carousel, slides);
             initSlides(carousel, slides, 0);
             runCarousel();
@@ -326,7 +365,6 @@
                 resetSortMenu();
                 const add = 20;
                 const [_, moreToLoad] = cardsContainer.clickAppend(add, getOrderBy(), getFilterFunction());
-                // window.sort();
 
                 if (!moreToLoad || cardsContainer.getSize() >= cats.getSize()) {
                     hideButton();
@@ -339,7 +377,7 @@
 
             window.filter = () => filter(cardsContainer);
 
-            // window.search = () => search(cardsContainer);
+            // document.querySelectorAll('#carousel btn')
         }
     </script>
 </head>
@@ -382,7 +420,7 @@
                 </div>
             </div>
             <div class="button-container">
-                <a class="sort-btn" onclick="sort()">Sortiraj</a>
+                <a class="btn" onclick="sort()">Sortiraj</a>
             </div>
         </div>
         <div id="filter-menu" class="sub-menu">

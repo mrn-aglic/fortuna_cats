@@ -1,7 +1,8 @@
 'use strict';
 
 export class Cat {
-    constructor(name, url, age, color) {
+    constructor(id, name, url, age, color) {
+        this.id = id;
         this.name = name;
         this.url = url;
         this.age = age; // dob mačića je u mjesecima

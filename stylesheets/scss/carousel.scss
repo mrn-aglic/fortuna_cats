@@ -1,7 +1,11 @@
+@import 'styles';
+
 $containerWidth: 70%;
 $slidewidth: 50%;
 $containerScreenLimit: 1028px;
 $btnDist: 20%;
+$textPaddingVertical: 8px;
+$textPaddingHorizontal: 12px;
 
 %slide {
   height: 100%;
@@ -63,6 +67,17 @@ $btnDist: 20%;
   flex: $slidewidth;
   transition: all 0.5s ease-in-out;
 
+  .adopt-button-container {
+    @extend %adopt-button-container;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    transform: translate(-15%, -10%);
+    z-index: 999;
+    transition: all 0.2s;
+  }
+
   img {
     height: 100%;
     width: 100%;
@@ -83,6 +98,10 @@ $btnDist: 20%;
   width: $slidewidth / 2;
   flex: $slidewidth / 2;
   mix-blend-mode: hard-light;
+
+  .adopt-button-container {
+    display: none;
+  }
 }
 
 .slide-preview-right:after {
@@ -98,14 +117,16 @@ $btnDist: 20%;
 .active:hover {
   transition: all 1s;
   transform: scale(1.05);
+  opacity: 1;
   overflow: visible;
+  z-index: 999;
 }
 
 .slide-text {
   color: #f2f2f2;
   background-color: black;
   font-size: 15px;
-  padding: 8px 12px;
+  padding: $textPaddingVertical $textPaddingHorizontal;
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -120,10 +141,6 @@ $btnDist: 20%;
 .btn-next {
   @extend %nav-btn;
   right: $btnDist;
-}
-
-.btn-prev:hover, .btn-next:hover {
-  opacity: 1;
 }
 
 @media screen and (max-width: 600px) {

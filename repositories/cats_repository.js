@@ -70,7 +70,7 @@ async function getCats(localimgs = false, num = 90) {
 
     const result = localimgs ? await loadFromLocal(num) : await getCatsFromApi(num);
 
-    return result.map((j, i) => new Cat(catnames[i], j.url, Math.floor(Math.random() * Math.floor(191)) + 2, colors[i]));
+    return result.map((j, i) => new Cat(i, catnames[i], j.url, Math.floor(Math.random() * Math.floor(191)) + 2, colors[i]));
 }
 
 export default getCats;

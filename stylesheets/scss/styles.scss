@@ -1,6 +1,7 @@
 $bgcolor: white;
 $bodyWidth: 100%;
 $buttonContainerMargin: 1rem;
+$buttonBorderRadius: 0.5rem;
 
 body {
   background-color: $bgcolor;
@@ -24,6 +25,7 @@ body {
 
 %button-container {
   margin: $buttonContainerMargin auto;
+  border-radius: $buttonBorderRadius;
   text-align: center;
 }
 
@@ -40,7 +42,7 @@ body {
 %btn {
   display: inline-block;
   cursor: pointer;
-  border-radius: 0.5rem;
+  border-radius: $buttonBorderRadius;
   box-sizing: border-box;
   text-decoration: none;
   font-family: inherit;
@@ -48,13 +50,28 @@ body {
   font-size: 1rem;
   color: #FFFFFF;
   background-color: #17a2b8;
-  border-color: #17a2b8;
   text-align: center;
   transition: all 0.2s;
   vertical-align: middle;
+  padding: 0.2rem 1rem;
   -webkit-appearance: button;
+  border: 2px solid #17a2b8;
 }
 
 .btn {
   @extend %btn;
+}
+
+%btn:hover {
+  color: #17a2b8;
+  background-color: #FFFFFF;
+  border: 2px solid #17a2b8;
+}
+
+.btn:hover {
+  @extend %btn:hover;
+}
+
+%adopt-button-container {
+  @extend %button-container;
 }

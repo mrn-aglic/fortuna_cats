@@ -1,5 +1,7 @@
 'use strict';
 
+import {DOMFactory} from './DOMFactory.js';
+
 export class CardsContainer {
     constructor(el, cats) {
         this.el = el;
@@ -7,6 +9,21 @@ export class CardsContainer {
 
         this.loadBy = 20;
         this.loadClicks = 0;
+
+        const self = this;
+
+        this.cats.observe(function (result, evt) {
+
+            switch (evt) {
+                case 'sort':
+                    self.sort(result);
+                    break;
+                case 'remove':
+                    console.log('got remove: ' + result);
+                    self.remove(result);
+                    break;
+            }
+        })
     }
 
     getLoadedNum() {
@@ -92,13 +109,16 @@ export class CardsContainer {
         return details;
     }
 
-    createAdoptButton() {
+    createAdoptButton(id) {
         const btn = document.createElement('a');
         const container = document.createElement('div');
 
         container.classList.add('adopt-button-container');
         btn.innerText = 'Posvoji';
         btn.classList.add('btn');
+        btn.setAttribute('data-id', id);
+
+        btn.onclick = () => this.cats.remove(id);
 
         container.appendChild(btn);
 
@@ -110,7 +130,7 @@ export class CardsContainer {
 
         const container = document.createElement('div');
         const details = this.createDetailsSection(cat);
-        const button = this.createAdoptButton();
+        const button = this.createAdoptButton(cat.id);
 
         container.classList.add('card');
 
@@ -139,8 +159,6 @@ export class CardsContainer {
         const [loaded, moreToLoad] = this.getNextForP(start, end, this.cats.sort(orderby), p);
         this.appendCats(loaded);
 
-        // const moreToLoad = satisfyCondition > loaded.length;
-
         // možda poslat obavijest o tome koliko mačića je dodano. Pa ako je 0 ispisat poruku o tome
         this.loadClicks += 1;
 
@@ -150,6 +168,15 @@ export class CardsContainer {
     refreshView(cats) {
         this.clear();
         this.appendCats(cats);
+    }
+
+    remove(cats) {
+
+        for(let cat of cats){
+            const btn = this.el.querySelector(`[data-id="${cat.id}"]`);
+            const card = btn.closest('.card');
+            this.el.removeChild(card);
+        }
     }
 
     clear() {

@@ -50,16 +50,18 @@ $autoRowHeight: 20rem + $buttonContainerMargin * 3;
   }
 
   .adopt-button-container {
-    @extend %button-container;
+    @extend %adopt-button-container;
     border-top: 1px black solid;
     margin-bottom: 0;
     margin-top: $buttonContainerMargin;
-    text-align: center;
     padding-top: 0.4rem;
 
     .btn {
       @extend %btn;
       padding: 0.3rem 2rem;
+    }
+    .btn:hover {
+      @extend %btn:hover;
     }
   }
 
