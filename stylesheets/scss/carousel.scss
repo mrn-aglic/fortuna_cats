@@ -119,7 +119,7 @@ $textPaddingHorizontal: 12px;
   transform: scale(1.05);
   opacity: 1;
   overflow: visible;
-  z-index: 999;
+  z-index: 1;
 }
 
 .slide-text {
@@ -141,6 +141,10 @@ $textPaddingHorizontal: 12px;
 .btn-next {
   @extend %nav-btn;
   right: $btnDist;
+}
+
+.btn-prev:hover, .btn-next:hover{
+  opacity: 1;
 }
 
 @media screen and (max-width: 600px) {

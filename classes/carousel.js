@@ -1,5 +1,7 @@
 'use strict'
 
+import {DOMFactory} from "./DOMFactory.js";
+
 export class Carousel {
     constructor(carousel, cats) {
         const currentIndex = 0;
@@ -85,23 +87,23 @@ export class Carousel {
         return img;
     }
 
-    createAdoptButton(id) {
-        const btn = document.createElement('a');
-        const container = document.createElement('div');
-
-        container.classList.add('adopt-button-container');
-        btn.innerText = 'Posvoji';
-        btn.classList.add('btn');
-        btn.setAttribute('data-id', id);
-
-        btn.onclick = () => this.cats.remove(id);
-
-        btn.setAttribute('data-id', id);
-
-        container.appendChild(btn);
-
-        return container;
-    }
+    // createAdoptButton(id) {
+    //     const btn = document.createElement('a');
+    //     const container = document.createElement('div');
+    //
+    //     container.classList.add('adopt-button-container');
+    //     btn.innerText = 'Posvoji';
+    //     btn.classList.add('btn');
+    //     btn.setAttribute('data-id', id);
+    //
+    //     btn.onclick = () => this.cats.remove(id);
+    //
+    //     btn.setAttribute('data-id', id);
+    //
+    //     container.appendChild(btn);
+    //
+    //     return container;
+    // }
 
     createSlide(cat) {
 
@@ -111,7 +113,7 @@ export class Carousel {
         const textNode = document.createElement('div');
         textNode.innerText = cat.name;
 
-        const adoptBtn = this.createAdoptButton(cat.id);
+        const adoptBtn = DOMFactory.createAdoptButton(cat.id, () => this.cats.remove(cat.id));
 
         this.asSlide(container);
         this.hide(container);
@@ -239,13 +241,10 @@ export class Carousel {
     }
 
     run() {
-        const debug = true;
         const intervalTime = 2000;
         const self = this;
 
         setInterval(function () {
-
-            if (debug) return;
 
             const active = document.querySelector('.active:hover');
             const isActiveHovered = active !== null;
