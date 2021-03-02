@@ -241,6 +241,7 @@ export class Carousel {
     run() {
         const debug = true;
         const intervalTime = 2000;
+        const self = this;
 
         setInterval(function () {
 
@@ -250,7 +251,7 @@ export class Carousel {
             const isActiveHovered = active !== null;
 
             if (!isActiveHovered) {
-                moveRight()
+                self.moveRight();
             }
         }, intervalTime);
     }
