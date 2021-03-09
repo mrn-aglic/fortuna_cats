@@ -13,8 +13,8 @@ Za pokretanje aplikacije:
     npm run scss
 ```
 3. pokrenuti server. Najjednostavnije je pokrenuti python server 
-   koji dolazi sa samom instalacijom Pythona iz foldera projekta:
-```shell   
+   koji dolazi sa samom instalacijom Pythona. Terminalom se pozicionirat u folder projekta i izvršiti naredbu:
+```shell
     python3 -m http.Server
 ```
 4. otići na adresu servera, npr. `http://localhost:8000`
