@@ -5,12 +5,10 @@ An assignment for the job position of frontend web developer.
 Za pokretanje aplikacije:
 1. restore node modula: `npm install`
 2. kompajlirat scss u css. To se može napraviti naredbom:
-   
-   
+
     npm run scss-compile
    
    Promjene u scss datotekama se mogu pratiti korištenjem naredbe
-   
    
     npm run scss
 3. pokrenuti server. Najjednostavnije je pokrenuti python server 
