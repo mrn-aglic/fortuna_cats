@@ -7,6 +7,7 @@
   },
   "devDependencies": {},
   "scripts": {
+    "scss-compile": "node-sass stylesheets/scss -o stylesheets/css",
     "scss": "node-sass --watch stylesheets/scss -o stylesheets/css"
   },
   "author": "",
