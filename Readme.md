@@ -7,13 +7,13 @@ Za pokretanje aplikacije:
 2. kompajlirat scss u css. To se može napraviti naredbom:
 ```shell
     npm run scss-compile
-```
-Promjene u scss datotekama se mogu pratiti korištenjem naredbe
-```shell
+```   
+   Promjene u scss datotekama se mogu pratiti korištenjem naredbe
+```shell   
     npm run scss
 ```
 3. pokrenuti server. Najjednostavnije je pokrenuti python server 
-   koji dolazi sa samom instalacijom Pythona iz foldera projekta:
+   koji dolazi sa samom instalacijom Pythona. Terminalom se pozicionirat u folder projekta i izvršiti naredbu:
 ```shell
     python3 -m http.Server
 ```
