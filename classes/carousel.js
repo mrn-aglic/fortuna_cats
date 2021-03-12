@@ -39,13 +39,14 @@ export class Carousel {
     }
 
     removePreview(slide) {
-        slide.classList.remove('slide-preview');
-        slide.classList.remove('slide-preview-left');
-        slide.classList.remove('slide-preview-right');
+        slide?.classList.remove('slide-preview');
+        slide?.classList.remove('slide-preview-left');
+        slide?.classList.remove('slide-preview-right');
     }
 
     setActive(slide) {
         slide.classList.add('active');
+        slide.classList.add('active-hover');
         this.removePreview(slide);
         this.show(slide);
     }
@@ -74,7 +75,7 @@ export class Carousel {
     }
 
     hide(el) {
-        el.classList.add('d-none');
+        el?.classList.add('d-none');
     }
 
     show(el) {
@@ -86,24 +87,6 @@ export class Carousel {
         img.src = obj.url;
         return img;
     }
-
-    // createAdoptButton(id) {
-    //     const btn = document.createElement('a');
-    //     const container = document.createElement('div');
-    //
-    //     container.classList.add('adopt-button-container');
-    //     btn.innerText = 'Posvoji';
-    //     btn.classList.add('btn');
-    //     btn.setAttribute('data-id', id);
-    //
-    //     btn.onclick = () => this.cats.remove(id);
-    //
-    //     btn.setAttribute('data-id', id);
-    //
-    //     container.appendChild(btn);
-    //
-    //     return container;
-    // }
 
     createSlide(cat) {
 
@@ -174,8 +157,19 @@ export class Carousel {
     }
 
     display(current, left, right) {
+
         this.setActive(current);
-        this.previewBoth(left, right);
+
+        if (left !== null && right !== null) {
+            this.previewBoth(left, right);
+        } else {
+            if (left === null) {
+                this.setActive(right);
+            }
+            if (right === null) {
+                this.setActive(left);
+            }
+        }
     }
 
     hidePreview(preview) {
@@ -184,8 +178,16 @@ export class Carousel {
     }
 
     refreshDisplay() {
-        this.previewBoth(this.left, this.right);
+
         this.setActive(this.current);
+
+        if (this.left !== this.right) { // if we have two slides, then left is equal to right
+            this.previewBoth(this.left, this.right);
+        } else {
+            if (this.left !== this.current) this.hide(this.left); // if we have one slide, then that slide is left, right and current
+
+            this.current.classList.remove('active-hover');
+        }
     }
 
     removeSlide(result) {
@@ -198,17 +200,37 @@ export class Carousel {
 
             if (slide === null) return;
 
-            const nextActive = this.right;
-            const nextRight = nextActive.nextElementSibling;
-
-            this.display(nextActive, this.left, nextRight);
-
             this.carousel.removeChild(slide);
+
+            const slides = this.carousel.getElementsByClassName('slide');
+
+            this.removePreview(this.left);
+            this.removePreview(this.right);
+
+            if (slides.length < 3) {
+                const nextActive = this.right;
+
+                if (this.left !== nextActive) {
+                    this.carousel.appendChild(this.left);
+                }
+                this.right = this.left;
+                this.current = nextActive;
+
+                this.refreshDisplay()
+            } else {
+                const nextActive = this.right;
+                const nextRight = nextActive.nextElementSibling;
+                this.current = nextActive;
+                this.right = nextRight;
+
+                this.display(this.current, this.left, this.right);
+            }
         }
     }
 
     moveRight() {
 
+        if (this.left === this.current) return;
         this.removeActiveState(this.current);
         this.hidePreview(this.left);
         this.carousel.appendChild(this.left);
@@ -217,24 +239,24 @@ export class Carousel {
 
         this.left = this.current;
         this.current = oldRight;
-        this.right = this.current.nextElementSibling;
+        this.right = this.current.nextElementSibling ?? this.left;
 
         this.refreshDisplay();
     }
 
     moveLeft() {
 
+        if (this.left === this.current) return;
         this.removeActiveState(this.current);
         this.hidePreview(this.right);
 
         const newLeft = this.carousel.querySelector('.slide:last-child');
-        this.carousel.insertBefore(newLeft, this.left)
+        this.carousel.insertBefore(newLeft, this.left);
 
         const oldLeft = this.left;
 
-        this.left = newLeft;
+        this.left = oldLeft === newLeft ? this.current : newLeft;
         this.right = this.current;
-
         this.current = oldLeft;
 
         this.refreshDisplay();

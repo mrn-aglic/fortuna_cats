@@ -24,12 +24,14 @@ export class Cats {
             for (let obs of self.observers) {
                 obs(result, 'sort');
             }
+
+            result.sort = self.cats.sort;
+
             return result;
         }
 
-        this.cats.splice = function (idx, num, items) {
-            const result = Array.prototype.splice.apply(self.cats, [idx, num, items]);
-            console.log(result);
+        this.cats.splice = function (idx, num) {
+            const result = Array.prototype.splice.apply(self.cats, [idx, num]);
             for (let obs of self.observers) {
                 obs(result, 'remove');
             }
