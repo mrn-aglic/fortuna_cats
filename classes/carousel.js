@@ -196,6 +196,9 @@ export class Carousel {
 
             const id = cat.id;
             const btn = this.carousel.querySelector(`[data-id="${id}"]`);
+
+            if (btn == null) return;
+
             const slide = btn.closest('.slide');
 
             if (slide === null) return;

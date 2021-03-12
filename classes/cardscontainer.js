@@ -75,14 +75,9 @@ export class CardsContainer {
 
         const details = document.createElement('div');
 
-        const monthsText = m => m === 1 ? 'mjesec' : m < 5 ? 'mjeseca' : 'mjeseci';
-
-        const {years, months} = cat.getAge();
-        const yearText = years > 0 ? `${years} godina` : '';
-        const monthText = months > 0 ? `${months} ${monthsText(months)}` : '';
         const ageRow = createDetailRow({
             text: 'Dob:',
-            data: [yearText, monthText].filter(t => t !== '').join(' i ')
+            data: cat.getAgeText()
         });
 
         const colorRow = createDetailRow({

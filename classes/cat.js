@@ -20,6 +20,15 @@ export class Cat {
         return {years: years, months: months};
     }
 
+    getAgeText(){
+        const monthsText = m => m === 1 ? 'mjesec' : m < 5 ? 'mjeseca' : 'mjeseci';
+        const {years, months} = this.getAge();
+        const yearText = years > 0 ? `${years} godina` : '';
+        const monthText = months > 0 ? `${months} ${monthsText(months)}` : '';
+
+        return [yearText, monthText].filter(t => t !== '').join(' i ')
+    }
+
     compareAge(other) {
         return this.age < other.age ? -1 : this.age === other.age ? 0 : 1;
     }

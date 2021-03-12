@@ -39,13 +39,13 @@ export class Modal {
 
     createMainContent(obj) {
 
-        function createDetailRow(text, prop) {
+        function createDetailRow(text, f) {
 
             const label = document.createElement('label');
             const span = document.createElement('span');
 
             label.innerText = text;
-            span.innerText = obj == null || prop == null ? 'placeholder' : obj[prop];
+            span.innerText = obj == null || f == null ? 'placeholder' : f(obj);
 
             const row = document.createElement('div');
             row.classList.add('modal-detail-row');
@@ -59,8 +59,8 @@ export class Modal {
         const details = document.createElement('div');
         details.classList.add('modal-details');
 
-        const nameRow = createDetailRow('Ime:', 'name');
-        const ageRow = createDetailRow('Dob:', 'age');
+        const nameRow = createDetailRow('Ime:', obj => obj.name);
+        const ageRow = createDetailRow('Dob:', obj => obj.getAgeText());
 
         const question = document.createElement('p');
         question.innerText = 'Jeste li sigurni da želite posvojiti mačića?'
