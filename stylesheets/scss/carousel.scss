@@ -19,7 +19,7 @@ $textPaddingHorizontal: 12px;
   color: #000;
   cursor: pointer;
   top: 30%;
-  font-size: 50px;
+  font-size: 40px;
   font-weight: bold;
   font-family: initial;
   height: 50px;
@@ -133,6 +133,11 @@ $textPaddingHorizontal: 12px;
   text-align: center;
 }
 
+.arrow {
+  display: block;
+  transform: translateY(10%);
+}
+
 .btn-prev {
   @extend %nav-btn;
   left: $btnDist;
@@ -143,7 +148,7 @@ $textPaddingHorizontal: 12px;
   right: $btnDist;
 }
 
-.btn-prev:hover, .btn-next:hover{
+.btn-prev:hover, .btn-next:hover {
   opacity: 1;
 }
 
