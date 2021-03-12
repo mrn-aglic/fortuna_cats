@@ -10,6 +10,7 @@ export class Modal {
     hide() {
         this.modal.classList.remove('modal-show');
         this.modal.classList.add('modal-hide');
+        document.body.classList.remove('modal-open');
     }
 
     createHeader() {
@@ -120,6 +121,13 @@ export class Modal {
         modal.classList.add('modal');
         modal.id = 'modal';
 
+        const self = this;
+        modal.addEventListener('click', function (e) {
+            if(e.target === modal){
+                self.hide();
+            }
+        });
+
         const container = document.createElement('div');
         container.classList.add('modal-container');
 
@@ -160,5 +168,6 @@ export class Modal {
 
         this.modal.classList.remove('modal-hide');
         this.modal.classList.add('modal-show');
+        document.body.classList.add('modal-open')
     }
 }

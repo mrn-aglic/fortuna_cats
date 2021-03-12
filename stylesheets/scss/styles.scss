@@ -11,6 +11,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+body.modal-open {
+  overflow-y: hidden;
+}
+
 .row {
   margin-bottom: 2%;
 }
