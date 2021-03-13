@@ -10,7 +10,7 @@ export class CardsContainer {
 
         this.loadBy = 20;
         this.loadClicks = 0;
-        this.predicate = null;
+        this.predicate = (_ => true);
 
         const self = this;
 
@@ -18,6 +18,7 @@ export class CardsContainer {
 
             if (self.cats.isRemoveEvent(event)) {
                 self.remove(result);
+                self.fillGap(result.length);
             }
         })
 
@@ -132,6 +133,7 @@ export class CardsContainer {
 
     getNextForP(start, end, p) {
         const pred = p || (_ => true);
+        this.predicate = pred; // store for fillGaps method
         return this.cats.getNextForP(start, end, pred);
     }
 
@@ -148,9 +150,8 @@ export class CardsContainer {
 
     refreshView(p) {
         this.clear();
-        const predicate = p || (_ => true);
         const numLoaded = this.getLoadedNum();
-        const cats = this.getNextForP(0, numLoaded, predicate);
+        const cats = this.getNextForP(0, numLoaded, p);
 
         this.appendCats(cats);
     }
@@ -162,6 +163,14 @@ export class CardsContainer {
             const card = btn.closest('.card');
             this.el.removeChild(card);
         }
+    }
+
+    fillGap(num) {
+        const currNum = this.getSize();
+        const nextCats = this.cats.filter(this.predicate).slice(currNum, currNum + num);
+
+        if (nextCats.length === 0) return;
+        this.appendCats(nextCats);
     }
 
     clear() {
