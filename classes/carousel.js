@@ -1,6 +1,7 @@
 'use strict'
 
-import {DOMFactory} from "./DOMFactory.js";
+import {DOMFactory} from './DOMFactory.js';
+import {CssHelpers} from './cssHelpers.js';
 
 export class Carousel {
     constructor(carousel, cats) {
@@ -35,7 +36,7 @@ export class Carousel {
 
     preview(slide) {
         slide.classList.add('slide-preview');
-        this.show(slide);
+        CssHelpers.show(slide);
     }
 
     removePreview(slide) {
@@ -48,7 +49,7 @@ export class Carousel {
         slide.classList.add('active');
         slide.classList.add('active-hover');
         this.removePreview(slide);
-        this.show(slide);
+        CssHelpers.show(slide);
     }
 
     removeActiveState(slide) {
@@ -74,14 +75,6 @@ export class Carousel {
         return el.matches('.slide');
     }
 
-    hide(el) {
-        el?.classList.add('d-none');
-    }
-
-    show(el) {
-        el.classList.remove('d-none');
-    }
-
     createImgFromObject(obj) {
         const img = document.createElement('img');
         img.src = obj.url;
@@ -99,7 +92,7 @@ export class Carousel {
         const adoptBtn = DOMFactory.createAdoptButton(cat.id, () => this.cats.remove(cat.id));
 
         this.asSlide(container);
-        this.hide(container);
+        CssHelpers.hide(container);
 
         textNode.classList.add('slide-text');
 
@@ -174,7 +167,7 @@ export class Carousel {
 
     hidePreview(preview) {
         this.removePreview(preview);
-        this.hide(preview);
+        CssHelpers.hide(preview);
     }
 
     refreshDisplay() {
@@ -184,7 +177,7 @@ export class Carousel {
         if (this.left !== this.right) { // if we have two slides, then left is equal to right
             this.previewBoth(this.left, this.right);
         } else {
-            if (this.left !== this.current) this.hide(this.left); // if we have one slide, then that slide is left, right and current
+            if (this.left !== this.current) CssHelpers.hide(this.left); // if we have one slide, then that slide is left, right and current
 
             this.current.classList.remove('active-hover');
         }

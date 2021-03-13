@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="stylesheets/css/menu.css">
 
     <script type="module" src="/repositories/cats_repository.js"></script>
+    <script type="module" src="/classes/cssHelpers.js"></script>
     <script type="module" src="/classes/DOMFactory.js"></script>
     <script type="module" src="/classes/carousel.js"></script>
     <script type="module" src="/classes/cat.js"></script>
@@ -24,6 +25,7 @@
 
     <script type="module">
 
+        import {CssHelpers} from './classes/cssHelpers.js';
         import {Carousel} from './classes/carousel.js';
         import {Cats} from './classes/catcontainer.js';
         import {CardsContainer} from './classes/cardscontainer.js';
@@ -83,25 +85,17 @@
         function filter(cardsContainer) {
 
             const btnLoad = document.querySelector('#btn-load');
-            show(btnLoad);
+            CssHelpers.show(btnLoad);
 
             const predicate = getFilterFunction();
             cardsContainer.refreshView(predicate);
             const moreToLoad = cardsContainer.moreToLoad(predicate);
 
             if (!moreToLoad) {
-                hide(btnLoad);
+                CssHelpers.hide(btnLoad);
             }
 
             updateResultNum(cardsContainer);
-        }
-
-        function show(el) {
-            el.classList.remove('d-none');
-        }
-
-        function hide(el) {
-            el.classList.add('d-none');
         }
 
         function updateResultNum(cardsContainer) {
@@ -112,9 +106,9 @@
             const cardsResult = document.getElementById('cards-result');
 
             if (cardsContainerSize === 0) {
-                show(cardsResult);
+                CssHelpers.show(cardsResult);
             } else {
-                hide(cardsResult);
+                CssHelpers.hide(cardsResult);
             }
         }
 
@@ -146,7 +140,7 @@
                 const moreToLoad = cardsContainer.clickAppend(loadNum, getFilterFunction());
 
                 if (!moreToLoad || cardsContainer.getSize() >= cats.getSize()) {
-                    hide(document.querySelector('#btn-load'));
+                    CssHelpers.hide(document.querySelector('#btn-load'));
                 }
 
                 updateResultNum(cardsContainer);
