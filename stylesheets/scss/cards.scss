@@ -3,6 +3,7 @@
 $autoRowHeight: 20rem + $buttonContainerMargin * 3;
 
 .btn-load {
+  display: inline-block;
   margin: 0;
   padding: 0.3rem 1rem;
 }
@@ -60,6 +61,7 @@ $autoRowHeight: 20rem + $buttonContainerMargin * 3;
       @extend %btn;
       padding: 0.3rem 2rem;
     }
+
     .btn:hover {
       @extend %btn:hover;
     }
@@ -94,4 +96,15 @@ $autoRowHeight: 20rem + $buttonContainerMargin * 3;
       }
     }
   }
+}
+
+#cards-result {
+  font-size: 1.5em;
+  background-color: white;
+  color: $blueColor;
+  border: 2px $blueColor solid;
+  border-radius: 0.5em;
+  width: max-content;
+  margin: 0 auto;
+  padding: 0.2em 0.4em;
 }

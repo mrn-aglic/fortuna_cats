@@ -36,19 +36,21 @@
                 '>': (a, b) => isNaN(a) ? b.localeCompare(a) : b - a
             };
 
-            const byV = document.querySelector('input[name="feature"]:checked').value;
-            const orderV = document.querySelector('input[name="order"]:checked').value;
+            const byFeatureV = document.querySelector('input[name="feature"]:checked').value;
+            const orderBy = document.querySelector('input[name="order"]:checked').value;
 
-            const by = c => c[byV];
-            const order = cmpr[orderV];
+            const byFeature = c => c[byFeatureV];
+            const order = cmpr[orderBy];
 
-            return (a, b) => order(by(a), by(b));
+            return (a, b) => order(byFeature(a), byFeature(b));
         }
 
-        function sort(cardsContainer) {
+        function sort(cats, cardsContainer) {
+            const predicate = getFilterFunction();
             const orderBy = getOrderBy();
 
-            cardsContainer.sort(orderBy, getFilterFunction());
+            cats.sort(orderBy);
+            cardsContainer.refreshView(predicate);
         }
 
         function createPredicateFunctionFromCheckboxes() {
@@ -80,35 +82,45 @@
 
         function filter(cardsContainer) {
 
-            showButton();
+            const btnLoad = document.querySelector('#btn-load');
+            show(btnLoad);
 
-            const orderBy = getOrderBy();
-            const p = getFilterFunction();
-            const moreToLoad = cardsContainer.filter(p, orderBy);
+            const predicate = getFilterFunction();
+            cardsContainer.refreshView(predicate);
+            const moreToLoad = cardsContainer.moreToLoad(predicate);
 
             if (!moreToLoad) {
-                hideButton();
+                hide(btnLoad);
             }
 
             updateResultNum(cardsContainer);
         }
 
+        function show(el) {
+            el.classList.remove('d-none');
+        }
+
+        function hide(el) {
+            el.classList.add('d-none');
+        }
+
         function updateResultNum(cardsContainer) {
+            const cardsContainerSize = cardsContainer.getSize();
             const result = document.getElementById('result');
-            result.innerText = cardsContainer.getSize();
+            result.innerText = cardsContainerSize;
+
+            const cardsResult = document.getElementById('cards-result');
+
+            if (cardsContainerSize === 0) {
+                show(cardsResult);
+            } else {
+                hide(cardsResult);
+            }
         }
 
         function resetSortMenu() {
             document.getElementById('age-radio').checked = true;
             document.getElementById('order-asc').checked = true;
-        }
-
-        function showButton() {
-            document.querySelector('.btn-load').style.display = 'inline-block';
-        }
-
-        function hideButton() {
-            document.querySelector('.btn-load').style.display = 'none';
         }
 
         window.onload = async function () {
@@ -118,33 +130,29 @@
             const catsArr = await getCats(useLocalImages);
             const cats = new Cats(catsArr);
 
-            // for debugging
-            // window.allcats = catsArr;
-
             const carouselEl = document.getElementById('carousel');
             const carousel = new Carousel(carouselEl, cats);
             // carousel.run();
 
             const cards = document.getElementById('cards');
             const cardsContainer = new CardsContainer(cards, cats);
-            cardsContainer.clickAppend(20);
+            const loadNum = 20;
+            cardsContainer.clickAppend(loadNum);
 
             updateResultNum(cardsContainer);
 
             window.loadCats = function () {
                 resetSortMenu();
-                const add = 20;
-                const [_, moreToLoad] = cardsContainer.clickAppend(add, getOrderBy(), getFilterFunction());
+                const moreToLoad = cardsContainer.clickAppend(loadNum, getFilterFunction());
 
                 if (!moreToLoad || cardsContainer.getSize() >= cats.getSize()) {
-                    hideButton();
+                    hide(document.querySelector('#btn-load'));
                 }
 
                 updateResultNum(cardsContainer);
             }
 
-            window.sort = () => sort(cardsContainer);
-
+            window.sort = () => sort(cats, cardsContainer);
             window.filter = () => filter(cardsContainer);
         }
     </script>
@@ -168,27 +176,24 @@
             <div id="sort-by">
                 <span class="menu-label">Sortiraj prema:</span>
                 <div class="radio-control">
-                    <input name="feature" id="name-radio" value="name" type="radio"/>
+                    <input name="feature" id="name-radio" value="name" type="radio" onchange="sort()"/>
                     <label for="name-radio">Imenu</label>
                 </div>
                 <div class="radio-control">
-                    <input name="feature" id="age-radio" value="age" type="radio" checked/>
+                    <input name="feature" id="age-radio" value="age" type="radio" onchange="sort()" checked/>
                     <label for="age-radio">Dobi</label>
                 </div>
             </div>
             <div id="sort-order">
                 <span class="menu-label"> Sortiraj: </span>
                 <div class="radio-control">
-                    <input name="order" id="order-asc" value="<" type="radio" checked/>
+                    <input name="order" id="order-asc" value="<" type="radio" onchange="sort()" checked/>
                     <label for="order-asc">Uzlazno</label>
                 </div>
                 <div class="radio-control">
-                    <input name="order" id="order-desc" value=">" type="radio"/>
+                    <input name="order" id="order-desc" value=">" type="radio" onchange="sort()"/>
                     <label for="order-desc">Silazno</label>
                 </div>
-            </div>
-            <div class="button-container">
-                <a class="btn" onclick="sort()">Sortiraj</a>
             </div>
         </div>
         <div id="filter-menu" class="sub-menu">
@@ -226,7 +231,10 @@
 <div class="row">
     <div id="cards-container">
         <div id="cards"></div>
-        <div class="button-container">
+        <div id="cards-result" class="d-none">
+            <span>Nije pronađen nijedan rezultat</span>
+        </div>
+        <div id="btn-load" class="button-container">
             <a class="btn btn-load" onclick="loadCats()">Prikaži više</a>
         </div>
     </div>

@@ -10,12 +10,13 @@ export class CardsContainer {
 
         this.loadBy = 20;
         this.loadClicks = 0;
+        this.predicate = null;
 
         const self = this;
 
-        this.cats.observe(function (result, evt) {
+        this.cats.observe(function (result, event) {
 
-            if (self.cats.isRemoveEvt(evt)) {
+            if (self.cats.isRemoveEvent(event)) {
                 self.remove(result);
             }
         })
@@ -101,23 +102,6 @@ export class CardsContainer {
         return details;
     }
 
-    // createAdoptButton(cat) {
-    //     const btn = document.createElement('a');
-    //     const container = document.createElement('div');
-    //
-    //     container.classList.add('adopt-button-container');
-    //     btn.innerText = 'Posvoji';
-    //     btn.classList.add('btn');
-    //     btn.setAttribute('data-id', cat.id);
-    //
-    //     const self = this;
-    //     btn.onclick = () => self.modal.show(cat, () => self.cats.remove(cat.id));
-    //
-    //     container.appendChild(btn);
-    //
-    //     return container;
-    // }
-
     createCard(cat) {
         const img = this.createImgFromCat(cat);
 
@@ -141,27 +125,33 @@ export class CardsContainer {
         cardCats.forEach(c => this.el.appendChild(c));
     }
 
-    getNextForP(start, end, sorted, p) {
-        const pred = p || (_ => true);
-        const filtered = sorted.filter(pred)
-        const moreToLoad = filtered.length > (end - start);
-        return [sorted.filter(pred).slice(start, end), moreToLoad];
+    moreToLoad(p) {
+        const predicate = p || (_ => true);
+        return this.getSize() < this.cats.filter(predicate).length;
     }
 
-    clickAppend(num, orderby, p) {
+    getNextForP(start, end, p) {
+        const pred = p || (_ => true);
+        return this.cats.getNextForP(start, end, pred);
+    }
+
+    clickAppend(num, p) {
         const start = this.getSize();
-        const end = start + num;
-        const [loaded, moreToLoad] = this.getNextForP(start, end, this.cats.sort(orderby), p);
+        const loaded = this.getNextForP(start, num, p);
         this.appendCats(loaded);
 
         // možda poslat obavijest o tome koliko mačića je dodano. Pa ako je 0 ispisat poruku o tome
         this.loadClicks += 1;
 
-        return [loaded, moreToLoad];
+        return this.moreToLoad(p);
     }
 
-    refreshView(cats) {
+    refreshView(p) {
         this.clear();
+        const predicate = p || (_ => true);
+        const numLoaded = this.getLoadedNum();
+        const cats = this.getNextForP(0, numLoaded, predicate);
+
         this.appendCats(cats);
     }
 
@@ -178,30 +168,5 @@ export class CardsContainer {
         while (this.el.firstChild) {
             this.el.removeChild(this.el.firstChild);
         }
-    }
-
-    sort(orderBy, filter) {
-
-        const p = filter || (_ => true);
-
-        const numLoaded = this.getLoadedNum();
-
-        const sorted = this.cats.sort(orderBy);
-        const [loaded, _] = this.getNextForP(0, numLoaded, sorted, p);
-
-        this.refreshView(loaded)
-    }
-
-    filter(p, orderBy) {
-
-        const numLoaded = this.getLoadedNum();
-
-        const sorted = this.cats.sort(orderBy);
-        const [cats, moreToLoad] = this.getNextForP(0, numLoaded, sorted, p);
-        // const cats = this.cats.filter(p).slice(0, numLoaded); // assume we keep the number of loaded cats
-
-        this.refreshView(cats);
-
-        return moreToLoad;
     }
 }

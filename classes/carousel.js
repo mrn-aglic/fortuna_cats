@@ -10,8 +10,8 @@ export class Carousel {
         this.cats = cats;
 
         const self = this;
-        cats.observe((result, evt) => {
-            if (cats.isRemoveEvt(evt)) {
+        cats.observe((result, event) => {
+            if (cats.isRemoveEvent(event)) {
                 self.removeSlide(result);
             }
         });

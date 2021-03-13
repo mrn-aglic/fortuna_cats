@@ -9,8 +9,12 @@ export class Cats {
         this.overrideFuncs();
     }
 
-    isRemoveEvt(evt) {
-        return evt === 'remove';
+    isRemoveEvent(event) {
+        return event === 'remove';
+    }
+
+    isSortEvent(event) {
+        return event === 'sort';
     }
 
     observe(f) {
@@ -20,12 +24,11 @@ export class Cats {
     overrideFuncs() {
         const self = this;
         this.cats.sort = function (orderBy) {
-            let result = Array.prototype.sort.apply(self.cats, orderBy);
+
+            let result = Array.prototype.sort.call(self.cats, orderBy);
             for (let obs of self.observers) {
                 obs(result, 'sort');
             }
-
-            result.sort = self.cats.sort;
 
             return result;
         }
@@ -41,7 +44,7 @@ export class Cats {
     }
 
     sort(orderBy) {
-        return [...this.cats].sort(orderBy);
+        return this.cats.sort(orderBy);
     }
 
     filter(p) {

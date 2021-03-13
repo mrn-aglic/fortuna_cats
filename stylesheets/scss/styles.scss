@@ -2,6 +2,7 @@ $bgcolor: white;
 $bodyWidth: 100%;
 $buttonContainerMargin: 1rem;
 $buttonBorderRadius: 0.5rem;
+$blueColor: #17a2b8;
 
 body {
   background-color: $bgcolor;
@@ -52,14 +53,14 @@ body.modal-open {
   font-weight: 400;
   font-size: 1rem;
   color: #FFFFFF;
-  background-color: #17a2b8;
+  background-color: $blueColor;
   text-align: center;
   transition: all 0.2s;
   vertical-align: middle;
   padding: 0.2rem 1rem;
   -webkit-appearance: none;
   -moz-appearance: none;
-  border: 2px solid #17a2b8;
+  border: 2px solid $blueColor;
 }
 
 .btn {
@@ -67,9 +68,9 @@ body.modal-open {
 }
 
 %btn:hover {
-  color: #17a2b8;
+  color: $blueColor;
   background-color: #FFFFFF;
-  border: 2px solid #17a2b8;
+  border: 2px solid $blueColor;
 }
 
 .btn:hover {
