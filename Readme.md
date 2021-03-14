@@ -23,7 +23,7 @@ You can also run a server using npm with the command:
 ```
 without installing the package.
 
-4. go to the address, e.g. `http://localhost:8000` (for Python) or `http://localhost:5000` for npx serve
+4. go to the address, e.g. `http://localhost:8000` (for Python) or `http://localhost:5000` for npx serve.
 
 
 The web page should look something like the one presented in the gif below:
