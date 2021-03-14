@@ -8,11 +8,7 @@
 
     <link rel="icon" href="/imgs/favicon.jpg">
 
-    <link rel="stylesheet" href="stylesheets/css/styles.css">
-    <link rel="stylesheet" href="stylesheets/css/carousel.css">
-    <link rel="stylesheet" href="stylesheets/css/cards.css">
-    <link rel="stylesheet" href="stylesheets/css/modal.css">
-    <link rel="stylesheet" href="stylesheets/css/menu.css">
+    <link rel="stylesheet" href="stylesheets/css/main.css">
 
     <script type="module" src="/repositories/cats_repository.js"></script>
     <script type="module" src="/classes/cssHelpers.js"></script>
@@ -73,7 +69,7 @@
 
         function createPredicateFunctionFromCheckboxes() {
             const queries = getQueries();
-            
+
             return c => {
                 let result = true;
                 for (let f of queries) {
