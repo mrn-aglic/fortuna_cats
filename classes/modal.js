@@ -16,30 +16,17 @@ export class Modal {
     createHeader() {
         const header = document.createElement('header');
         header.classList.add('modal-header');
-
-        const closeBtn = document.createElement('a');
-        closeBtn.innerText = 'x';
-        closeBtn.classList.add('modal-x');
-
-        closeBtn.onclick = () => this.hide();
-
-        const btnContainer = document.createElement('div');
-        btnContainer.classList.add('modal-x-btn-container');
-
-        const title = document.createElement('h1');
-        title.innerText = 'Posvoji mačku'
-
-        btnContainer.appendChild(closeBtn);
-        header.appendChild(btnContainer);
-        header.appendChild(title);
-
-        header.id = 'modal-header';
-
+        header.innerHTML =
+            '<div class="modal-x-btn-container">' +
+            '<a class="modal-x">x</a>' +
+            '</div>' +
+            '<h1>Posvoji mačku</h1>' ;
+        const close = header.querySelector('.modal-x');
+        close.onclick = () => this.hide();
         return header;
     }
 
     createMainContent(obj) {
-
         function createDetailRow(text, f) {
 
             const label = document.createElement('label');
@@ -67,8 +54,8 @@ export class Modal {
         question.innerText = 'Jeste li sigurni da želite posvojiti mačića?'
 
         const img = document.createElement('img');
+        img.classList.add('full-width');
         img.src = obj == null ? '' : obj.url;
-        img.style.width = '100%';
 
         details.appendChild(img);
         details.appendChild(nameRow);
@@ -87,32 +74,19 @@ export class Modal {
     createFooter() {
         const footer = document.createElement('footer');
         footer.classList.add('modal-footer');
-
-        const btnOkContainer = document.createElement('div');
-        btnOkContainer.classList.add('modal-footer-btn-container');
-
-        const btnCancelContainer = document.createElement('div');
-        btnCancelContainer.classList.add('modal-footer-btn-container');
-
-        const okBtn = document.createElement('a');
-        okBtn.innerText = 'Da';
-        const cancelBtn = document.createElement('a');
-        cancelBtn.innerText = 'Odustani';
-
-        btnOkContainer.appendChild(okBtn);
-        btnCancelContainer.appendChild(cancelBtn);
-
-        btnCancelContainer.onclick = () => this.hide();
-
-        const btns = document.createElement('div');
-        btns.classList.add('modal-footer-btns');
-
-        btns.appendChild(btnOkContainer);
-        btns.appendChild(btnCancelContainer);
-
-        footer.appendChild(btns);
         footer.id = 'modal-footer';
 
+        footer.innerHTML = '<div class="modal-footer-btns">' +
+            '<div id="modal-ok" class="modal-footer-btn-container">' +
+            '<a>Da</a>' +
+            '</div>' +
+            '<div id="modal-cancel" class="modal-footer-btn-container">' +
+            '<a>Odustani</a>' +
+            '</div>' +
+            '</div>';
+        const cancelBtn = footer.querySelector('#modal-cancel');
+
+        cancelBtn.onclick = () => this.hide();
         return footer;
     }
 
@@ -152,7 +126,7 @@ export class Modal {
 
         const newMain = this.createMainContent(obj);
 
-        const btn = footer.querySelector('a');
+        const btn = footer.querySelector('#modal-ok');
         const self = this;
 
         btn.onclick = () => {
