@@ -5,7 +5,7 @@ export class Cat {
         this.id = id;
         this.name = name;
         this.url = url;
-        this.age = age; // dob mačića je u mjesecima
+        this.age = age; // cat age is stored in months
         this.color = color;
     }
 

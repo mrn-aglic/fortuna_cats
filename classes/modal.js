@@ -147,7 +147,6 @@ export class Modal {
     }
 
     show(obj, okCallback) {
-
         const footer = document.getElementById('modal-footer');
         const main = document.getElementById('modal-main');
 

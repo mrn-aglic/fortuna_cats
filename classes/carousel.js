@@ -5,8 +5,9 @@ import {CssHelpers} from './cssHelpers.js';
 
 export class Carousel {
     constructor(carousel, cats) {
-        const currentIndex = 0;
+        const startIndex = 0;
 
+        this.numCatsInCarousel = 4;
         this.carousel = carousel;
         this.cats = cats;
 
@@ -17,13 +18,12 @@ export class Carousel {
             }
         });
 
-        const objects = cats.getYoungest(4);
-        this.populateCarousel(objects);
+        const carouselCats = cats.getYoungest(this.numCatsInCarousel);
+        this.populateCarousel(carouselCats);
 
-        const [left, right] = this.getLeftAndRight(currentIndex, this.slides);
-        this.current = this.slides[currentIndex];
-        this.left = left;
-        this.right = right;
+        this.current = this.slides[startIndex];
+        this.left = this.getLeft(this.current);
+        this.right = this.getRight(this.current);
 
         this.initSlides();
         this.initButtons();
@@ -32,11 +32,6 @@ export class Carousel {
     asSlide(slide) {
         slide.classList.remove('slide-preview');
         slide.classList.add('slide');
-    }
-
-    preview(slide) {
-        slide.classList.add('slide-preview');
-        CssHelpers.show(slide);
     }
 
     removePreview(slide) {
@@ -54,16 +49,19 @@ export class Carousel {
 
     removeActiveState(slide) {
         slide.classList.remove('active');
+        slide.classList.remove('active-hover');
     }
 
     leftPreview(slide) {
+        slide.classList.add('slide-preview');
         slide.classList.add('slide-preview-left');
-        this.preview(slide);
+        CssHelpers.show(slide);
     }
 
     rightPreview(slide) {
+        slide.classList.add('slide-preview');
         slide.classList.add('slide-preview-right');
-        this.preview(slide);
+        CssHelpers.show(slide);
     }
 
     previewBoth(left, right) {
@@ -82,7 +80,6 @@ export class Carousel {
     }
 
     createSlide(cat) {
-
         const img = this.createImgFromObject(cat);
 
         const container = document.createElement('div');
@@ -113,10 +110,7 @@ export class Carousel {
 
     initSlides() {
         this.display(this.current, this.left, this.right);
-
-        this.leftPreview(this.left);
-        this.rightPreview(this.right);
-
+        this.previewBoth(this.left, this.right);
         this.carousel.insertBefore(this.left, this.current);
     }
 
@@ -141,16 +135,7 @@ export class Carousel {
         return prev === null || !this.isSlide(prev) ? active.parentNode.lastElementChild : prev;
     }
 
-    getLeftAndRight(idx, slides) {
-        const current = slides[idx];
-        const left = this.getLeft(current);
-        const right = this.getRight(current);
-
-        return [left, right];
-    }
-
     display(current, left, right) {
-
         this.setActive(current);
 
         if (left !== null && right !== null) {
@@ -171,20 +156,17 @@ export class Carousel {
     }
 
     refreshDisplay() {
-
         this.setActive(this.current);
 
         if (this.left !== this.right) { // if we have two slides, then left is equal to right
             this.previewBoth(this.left, this.right);
         } else {
             if (this.left !== this.current) CssHelpers.hide(this.left); // if we have one slide, then that slide is left, right and current
-
             this.current.classList.remove('active-hover');
         }
     }
 
     removeSlide(result) {
-
         for (let cat of result) {
 
             const id = cat.id;
@@ -225,7 +207,6 @@ export class Carousel {
     }
 
     moveRight() {
-
         if (this.left === this.current) return;
         this.removeActiveState(this.current);
         this.hidePreview(this.left);
@@ -241,7 +222,6 @@ export class Carousel {
     }
 
     moveLeft() {
-
         if (this.left === this.current) return;
         this.removeActiveState(this.current);
         this.hidePreview(this.right);

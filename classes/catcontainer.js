@@ -59,7 +59,7 @@ export class Cats {
         return this.cats.slice(from, end);
     }
 
-    getNextForP(from, num, p) {
+    getNextForPredicate(from, num, p) {
         return this.cats.filter(p).slice(from, from + num);
     }
 

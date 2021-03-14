@@ -40,7 +40,6 @@ export class CardsContainer {
     }
 
     createDetailsSection(cat) {
-
         function createColorBox(color) {
             const box = document.createElement('div');
             box.classList.add('color-box');
@@ -87,7 +86,8 @@ export class CardsContainer {
             data: cat.color
         })
         const colorBox = createColorBox(cat.color);
-        colorRow.lastChild.appendChild(colorBox);
+        const colorValueContainer = colorRow.lastChild;
+        colorValueContainer.appendChild(colorBox);
 
         const nameNode = document.createElement('h1');
 
@@ -131,15 +131,15 @@ export class CardsContainer {
         return this.getSize() < this.cats.filter(predicate).length;
     }
 
-    getNextForP(start, end, p) {
+    getNextForPredicate(start, end, p) {
         const pred = p || (_ => true);
         this.predicate = pred; // store for fillGaps method
-        return this.cats.getNextForP(start, end, pred);
+        return this.cats.getNextForPredicate(start, end, pred);
     }
 
     clickAppend(num, p) {
         const start = this.getSize();
-        const loaded = this.getNextForP(start, num, p);
+        const loaded = this.getNextForPredicate(start, num, p);
         this.appendCats(loaded);
 
         // možda poslat obavijest o tome koliko mačića je dodano. Pa ako je 0 ispisat poruku o tome
@@ -151,13 +151,12 @@ export class CardsContainer {
     refreshView(p) {
         this.clear();
         const numLoaded = this.getLoadedNum();
-        const cats = this.getNextForP(0, numLoaded, p);
+        const cats = this.getNextForPredicate(0, numLoaded, p);
 
         this.appendCats(cats);
     }
 
     remove(cats) {
-
         for (let cat of cats) {
             const btn = this.el.querySelector(`[data-id="${cat.id}"]`);
             const card = btn.closest('.card');
