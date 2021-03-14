@@ -33,16 +33,16 @@
 
         function getOrderBy() {
 
-            const cmpr = {
+            const comparisonFunctions = {
                 '<': (a, b) => isNaN(a) ? a.localeCompare(b) : a - b,
                 '>': (a, b) => isNaN(a) ? b.localeCompare(a) : b - a
             };
 
-            const byFeatureV = document.querySelector('input[name="feature"]:checked').value;
-            const orderBy = document.querySelector('input[name="order"]:checked').value;
+            const orderByFeatureValue = document.querySelector('input[name="feature"]:checked').value;
+            const orderDirection = document.querySelector('input[name="order"]:checked').value;
 
-            const byFeature = c => c[byFeatureV];
-            const order = cmpr[orderBy];
+            const byFeature = c => c[orderByFeatureValue];
+            const order = comparisonFunctions[orderDirection];
 
             return (a, b) => order(byFeature(a), byFeature(b));
         }
@@ -55,20 +55,32 @@
             cardsContainer.refreshView(predicate);
         }
 
-        function createPredicateFunctionFromCheckboxes() {
-            const paramName = 'c';
+        function getQueries() {
+            const checked = [...document.querySelectorAll('[name=filter]')].filter(c => c.checked);
 
-            const filters = [...document.querySelectorAll('input[name=filter]')];
-            const checked = filters.filter(f => f.checked);
-            const values = checked.map(f => f.value.split(/(<[=>]?|===|>=?)/g));
-
-            if (checked.length === 0) {
-                return (_ => true);
+            const idsToFilters = {
+                'age6': c => c.age <= 6,
+                'age12': c => c.age <= 12,
+                'color': c => c.color === 'black'
             }
 
-            const queries = values.map(q => `${paramName}["${q[0]}"] ${q[1]} ${q[2]}`);
-            const predicate = queries.join(' &&');
-            return new Function(`return function(${paramName}){ return ${predicate}; }`)();
+            const queries = [];
+            for(let ch of checked){
+                queries.push(idsToFilters[ch.id]);
+            }
+            return queries;
+        }
+
+        function createPredicateFunctionFromCheckboxes() {
+            const queries = getQueries();
+            
+            return c => {
+                let result = true;
+                for (let f of queries) {
+                    result = result && f(c);
+                }
+                return result;
+            };
         }
 
         function getFilterFunction() {
@@ -199,19 +211,19 @@
                 <span class="menu-item"> Prikaži samo: </span>
                 <div class="checkbox-container">
                     <label class="checkbox-label">
-                        <input name="filter" value="age<=6" type="checkbox" onchange="filter()"/>
+                        <input id="age6" name="filter" value="age<=6" type="checkbox" onchange="filter()"/>
                         <span class="checkbox-box">Mačić je mlađi od 6 mjeseci</span>
                     </label>
                 </div>
                 <div class="checkbox-container">
                     <label class="checkbox-label">
-                        <input name="filter" value="age<=12" type="checkbox" onchange="filter()"/>
+                        <input id="age12" name="filter" value="age<=12" type="checkbox" onchange="filter()"/>
                         <span class="checkbox-box">Mačić je mlađi od 12 mjeseci</span>
                     </label>
                 </div>
                 <div class="checkbox-container">
                     <label class="checkbox-label">
-                        <input name="filter" value="color==='black'" type="checkbox" onchange="filter()"/>
+                        <input id="color" name="filter" value="color==='black'" type="checkbox" onchange="filter()"/>
                         <span class="checkbox-box">Mačić je crne boje</span>
                     </label>
                 </div>
