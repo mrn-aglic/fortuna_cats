@@ -33,44 +33,38 @@ async function getCatsFromApi(num) {
 }
 
 async function loadFromLocal(num) {
-
-    async function sendHttpRequest() {
-        const Http = new XMLHttpRequest();
-        const url = '/imgs';
-        Http.open("GET", url);
-        Http.send();
-
-        if (Http.readyState === XMLHttpRequest.DONE) {
-            return Http;
+    const response = await fetch('/imgs', {
+        headers: {
+            'method': 'GET',
+            'Content-Type': 'img/jpg',
+            'Accept': 'img/jpg'
         }
-
-        let res;
-        const p = new Promise((r) => res = r);
-        Http.onreadystatechange = () => {
-            if (Http.readyState === XMLHttpRequest.DONE) {
-                res(Http);
-            }
-        }
-        return p;
-    }
-
-    const p = await sendHttpRequest(num);
-    const text = p.responseText;
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(text, 'text/html');
-    const as = [...doc.getElementsByTagName('a')];
-    return as.slice(0, num).map(a => {
-        return {url: `imgs/${a.innerText}`}
     });
+    const responseText = await response.text();
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(responseText, 'text/html');
+    const files = [...doc.querySelectorAll('.file')];
+    return files.slice(0, num).map(f => {
+        return {url: f.href};
+    });
+}
+
+function createCatInstance(index, url, num) {
+    const colors = choice(num);
+
+    const upperAgeLimit = 191;
+    const lowerAgeLimit = 2;
+    const randomAge = Math.floor(Math.random() * upperAgeLimit) + lowerAgeLimit;
+    const color = colors[index];
+    const name = catnames[index];
+    return new Cat(index, name, url, randomAge, color);
 }
 
 async function getCats(localimgs = false, num = 90) {
 
-    const colors = choice(num);
-
     const result = localimgs ? await loadFromLocal(num) : await getCatsFromApi(num);
-
-    return result.map((j, i) => new Cat(i, catnames[i], j.url, Math.floor(Math.random() * Math.floor(191)) + 2, colors[i]));
+    return result.map((j, i) => createCatInstance(i, j.url, num));
 }
 
 export default getCats;
