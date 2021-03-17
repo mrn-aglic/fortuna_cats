@@ -39,7 +39,6 @@ $autoRowHeight: 20rem + $buttonContainerMargin * 3;
   padding: 1rem;
   text-align: left;
   transition: all 0.5s ease-in-out;
-  box-sizing: border-box;
   border: 1px black solid;
 
   img {
@@ -85,7 +84,6 @@ $autoRowHeight: 20rem + $buttonContainerMargin * 3;
 
         .color-box {
           border: 1px solid;
-          box-sizing: border-box;
           width: 1em;
           height: 1em;
           border-radius: 1em;

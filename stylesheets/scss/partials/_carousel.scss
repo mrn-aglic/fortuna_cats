@@ -47,10 +47,6 @@ $textPaddingHorizontal: 12px;
   height: 50vh;
   width: $containerWidth;
   text-align: center;
-
-  * {
-    box-sizing: border-box;
-  }
 }
 
 #carousel {
@@ -74,7 +70,7 @@ $textPaddingHorizontal: 12px;
     bottom: 0;
     margin: 0;
     transform: translate(-15%, 50%);
-    z-index: 999;
+    z-index: 1;
     transition: all 0.2s;
   }
 

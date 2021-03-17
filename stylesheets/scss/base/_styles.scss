@@ -4,6 +4,10 @@ $buttonContainerMargin: 1rem;
 $buttonBorderRadius: 0.5rem;
 $blueColor: #17a2b8;
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: $bgcolor;
   width: $bodyWidth;
@@ -17,7 +21,7 @@ body.modal-open {
 }
 
 .row {
-  margin-bottom: 2%;
+  margin-bottom: 30px;
 }
 
 .d-none {
@@ -47,7 +51,6 @@ body.modal-open {
   display: inline-block;
   cursor: pointer;
   border-radius: $buttonBorderRadius;
-  box-sizing: border-box;
   text-decoration: none;
   font-family: inherit;
   font-weight: 400;

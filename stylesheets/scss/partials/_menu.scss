@@ -129,15 +129,7 @@ input[name=filter]:checked + .checkbox-box:after {
   transition: all 0.3s ease-out;
 }
 
-#sort-menu {
-  @extend %sub-menu;
-}
-
-#filter-menu {
-  @extend %sub-menu;
-}
-
-#search-menu {
+#sort-menu, #filter-menu, #search-menu {
   @extend %sub-menu;
 }
 
