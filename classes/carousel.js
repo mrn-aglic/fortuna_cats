@@ -12,9 +12,9 @@ export class Carousel {
         this.cats = cats;
 
         const self = this;
-        cats.observe((result, event) => {
+        cats.observe((state, event) => {
             if (cats.isRemoveEvent(event)) {
-                self.removeSlide(result);
+                self.removeSlide(state);
             }
         });
 
@@ -86,7 +86,7 @@ export class Carousel {
         const textNode = document.createElement('div');
         textNode.innerText = cat.name;
 
-        const adoptBtn = DOMFactory.createAdoptButton(cat.id, () => this.cats.remove(cat.id));
+        const adoptBtn = DOMFactory.createAdoptButton(cat.id, () => this.cats.removeById(cat.id));
 
         this.asSlide(container);
         CssHelpers.hide(container);
@@ -166,7 +166,8 @@ export class Carousel {
         }
     }
 
-    removeSlide(result) {
+    removeSlide(state) {
+        const result = state.result;
         for (let cat of result) {
 
             const id = cat.id;

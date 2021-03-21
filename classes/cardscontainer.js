@@ -2,6 +2,7 @@
 
 import {DOMFactory} from './DOMFactory.js';
 import {Modal} from './modal.js';
+import {CssHelpers} from './cssHelpers.js';
 
 export class CardsContainer {
     constructor(el, cats) {
@@ -14,15 +15,26 @@ export class CardsContainer {
 
         const self = this;
 
-        this.cats.observe(function (result, event) {
+        this.cats.observe(function (state, event) {
 
             if (self.cats.isRemoveEvent(event)) {
-                self.remove(result);
-                self.fillGap(result.length);
+                self.remove(state);
+                self.fillGap(state);
+            } else if (self.cats.isSortEvent(event)) {
+                self.refreshView(state.predicate);
+            } else if (self.cats.isFilterEvent(event)) {
+                self.refreshView(state.predicate);
+                self.manageLoadMoreBtn(state);
+            } else if (self.cats.isLoadMoreEvent(event)) {
+                self.clickAppend(self.loadBy, state.predicate);
+                self.manageLoadMoreBtn(state);
             }
         })
 
         this.modal = new Modal();
+
+        const loadBtn = document.querySelector('#btn-load > a');
+        loadBtn.onclick = () => this.loadMore();
     }
 
     getLoadedNum() {
@@ -110,7 +122,10 @@ export class CardsContainer {
         const details = this.createDetailsSection(cat);
 
         const self = this;
-        const button = DOMFactory.createAdoptButton(cat.id, () => self.modal.show(cat, () => self.cats.remove(cat.id)));
+        const button = DOMFactory.createAdoptButton(cat.id, () =>
+            self.modal.show(cat, () => {
+                self.cats.removeById(cat.id)
+            }));
 
         container.classList.add('card');
 
@@ -126,11 +141,6 @@ export class CardsContainer {
         cardCats.forEach(c => this.el.appendChild(c));
     }
 
-    moreToLoad(p) {
-        const predicate = p || (_ => true);
-        return this.getSize() < this.cats.filter(predicate).length;
-    }
-
     getNextForPredicate(start, end, p) {
         const pred = p || (_ => true);
         this.predicate = pred; // store for fillGaps method
@@ -144,8 +154,6 @@ export class CardsContainer {
 
         // možda poslat obavijest o tome koliko mačića je dodano. Pa ako je 0 ispisat poruku o tome
         this.loadClicks += 1;
-
-        return this.moreToLoad(p);
     }
 
     refreshView(p) {
@@ -154,9 +162,18 @@ export class CardsContainer {
         const cats = this.getNextForPredicate(0, numLoaded, p);
 
         this.appendCats(cats);
+
+        const cardsResult = document.getElementById('cards-result');
+
+        if (this.getSize() === 0) {
+            CssHelpers.show(cardsResult);
+        } else {
+            CssHelpers.hide(cardsResult);
+        }
     }
 
-    remove(cats) {
+    remove(state) {
+        const cats = state.result;
         for (let cat of cats) {
             const btn = this.el.querySelector(`[data-id="${cat.id}"]`);
             const card = btn.closest('.card');
@@ -164,7 +181,8 @@ export class CardsContainer {
         }
     }
 
-    fillGap(num) {
+    fillGap(state) {
+        const num = state.result.length;
         const currNum = this.getSize();
         const nextCats = this.cats.filter(this.predicate).slice(currNum, currNum + num);
 
@@ -175,6 +193,22 @@ export class CardsContainer {
     clear() {
         while (this.el.firstChild) {
             this.el.removeChild(this.el.firstChild);
+        }
+    }
+
+    loadMore() {
+        this.cats.loadMore(this.getSize(), this.loadBy);
+    }
+
+    manageLoadMoreBtn(state) {
+        const predicate = state.predicate;
+        const moreToLoad = this.getSize() < state.allCats.filter(predicate).length;
+
+        const loadBtn = document.getElementById('btn-load');
+        if (moreToLoad) {
+            CssHelpers.show(loadBtn);
+        } else {
+            CssHelpers.hide(loadBtn);
         }
     }
 }

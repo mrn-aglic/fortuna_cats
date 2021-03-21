@@ -21,109 +21,11 @@
 
     <script type="module">
 
-        import {CssHelpers} from './classes/cssHelpers.js';
         import {Carousel} from './classes/carousel.js';
         import {Cats} from './classes/catcontainer.js';
         import {CardsContainer} from './classes/cardscontainer.js';
+        import {Menu} from './classes/menu.js';
         import getCats from './repositories/cats_repository.js';
-
-        function getOrderBy() {
-
-            const comparisonFunctions = {
-                '<': (a, b) => isNaN(a) ? a.localeCompare(b) : a - b,
-                '>': (a, b) => isNaN(a) ? b.localeCompare(a) : b - a
-            };
-
-            const orderByFeatureValue = document.querySelector('input[name="feature"]:checked').value;
-            const orderDirection = document.querySelector('input[name="order"]:checked').value;
-
-            const byFeature = c => c[orderByFeatureValue];
-            const order = comparisonFunctions[orderDirection];
-
-            return (a, b) => order(byFeature(a), byFeature(b));
-        }
-
-        function sort(cats, cardsContainer) {
-            const predicate = getFilterFunction();
-            const orderBy = getOrderBy();
-
-            cats.sort(orderBy);
-            cardsContainer.refreshView(predicate);
-        }
-
-        function getQueries() {
-            const checked = [...document.querySelectorAll('[name=filter]')].filter(c => c.checked);
-
-            const idsToFilters = {
-                'age6': c => c.age <= 6,
-                'age12': c => c.age <= 12,
-                'color': c => c.color === 'black'
-            }
-
-            const queries = [];
-            for(let ch of checked){
-                queries.push(idsToFilters[ch.id]);
-            }
-            return queries;
-        }
-
-        function createPredicateFunctionFromCheckboxes() {
-            const queries = getQueries();
-
-            return c => {
-                let result = true;
-                for (let f of queries) {
-                    result = result && f(c);
-                }
-                return result;
-            };
-        }
-
-        function getFilterFunction() {
-            const searchbox = document.querySelector('#search-menu > input');
-            const searchstring = searchbox.value.toLowerCase();
-
-            const searchFilter = c => c.name.toLowerCase().includes(searchstring);
-
-            const f = createPredicateFunctionFromCheckboxes();
-
-            return c => searchFilter(c) && f(c);
-        }
-
-        function filter(cardsContainer) {
-
-            const btnLoad = document.querySelector('#btn-load');
-            CssHelpers.show(btnLoad);
-
-            const predicate = getFilterFunction();
-            cardsContainer.refreshView(predicate);
-            const moreToLoad = cardsContainer.moreToLoad(predicate);
-
-            if (!moreToLoad) {
-                CssHelpers.hide(btnLoad);
-            }
-
-            updateResultNum(cardsContainer);
-        }
-
-        function updateResultNum(cardsContainer) {
-            const cardsContainerSize = cardsContainer.getSize();
-            const result = document.getElementById('result');
-            result.innerText = cardsContainerSize;
-
-            const cardsResult = document.getElementById('cards-result');
-
-            if (cardsContainerSize === 0) {
-                CssHelpers.show(cardsResult);
-            } else {
-                CssHelpers.hide(cardsResult);
-            }
-        }
-
-        function resetSortMenu() {
-            document.getElementById('age-radio').checked = true;
-            document.getElementById('order-asc').checked = true;
-        }
 
         window.onload = async function () {
 
@@ -138,24 +40,18 @@
 
             const cards = document.getElementById('cards');
             const cardsContainer = new CardsContainer(cards, cats);
+
             const loadNum = 20;
             cardsContainer.clickAppend(loadNum);
 
-            updateResultNum(cardsContainer);
+            const menu = new Menu(document.getElementById('display-menu'), cats, () => cardsContainer.getSize());
+            menu.updateResultNum();
 
             window.loadCats = function () {
-                resetSortMenu();
-                const moreToLoad = cardsContainer.clickAppend(loadNum, getFilterFunction());
-
-                if (!moreToLoad || cardsContainer.getSize() >= cats.getSize()) {
-                    CssHelpers.hide(document.querySelector('#btn-load'));
-                }
-
-                updateResultNum(cardsContainer);
+                menu.resetSortMenu();
+                cardsContainer.clickAppend(loadNum, )
+                menu.updateResultNum(cardsContainer);
             }
-
-            window.sort = () => sort(cats, cardsContainer);
-            window.filter = () => filter(cardsContainer);
         }
     </script>
 </head>
@@ -174,60 +70,6 @@
 </div>
 <div class="row">
     <div id="display-menu">
-        <div id="sort-menu" class="sub-menu">
-            <div id="sort-by">
-                <span class="menu-label">Sortiraj prema:</span>
-                <div class="radio-control">
-                    <input name="feature" id="name-radio" value="name" type="radio" onchange="sort()"/>
-                    <label for="name-radio">Imenu</label>
-                </div>
-                <div class="radio-control">
-                    <input name="feature" id="age-radio" value="age" type="radio" onchange="sort()" checked/>
-                    <label for="age-radio">Dobi</label>
-                </div>
-            </div>
-            <div id="sort-order">
-                <span class="menu-label"> Sortiraj: </span>
-                <div class="radio-control">
-                    <input name="order" id="order-asc" value="<" type="radio" onchange="sort()" checked/>
-                    <label for="order-asc">Uzlazno</label>
-                </div>
-                <div class="radio-control">
-                    <input name="order" id="order-desc" value=">" type="radio" onchange="sort()"/>
-                    <label for="order-desc">Silazno</label>
-                </div>
-            </div>
-        </div>
-        <div id="filter-menu" class="sub-menu">
-            <div class="flex-row">
-                <span>Rezultata:</span>
-                <span id="result"></span>
-            </div>
-            <div class="filters">
-                <span class="menu-item"> Prikaži samo: </span>
-                <div class="checkbox-container">
-                    <label class="checkbox-label">
-                        <input id="age6" name="filter" value="age<=6" type="checkbox" onchange="filter()"/>
-                        <span class="checkbox-box">Mačić je mlađi od 6 mjeseci</span>
-                    </label>
-                </div>
-                <div class="checkbox-container">
-                    <label class="checkbox-label">
-                        <input id="age12" name="filter" value="age<=12" type="checkbox" onchange="filter()"/>
-                        <span class="checkbox-box">Mačić je mlađi od 12 mjeseci</span>
-                    </label>
-                </div>
-                <div class="checkbox-container">
-                    <label class="checkbox-label">
-                        <input id="color" name="filter" value="color==='black'" type="checkbox" onchange="filter()"/>
-                        <span class="checkbox-box">Mačić je crne boje</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div id="search-menu" class="sub-menu">
-            <input type="text" placeholder="Pretraga po imenu" onkeyup="filter()"/>
-        </div>
     </div>
 </div>
 <div class="row">
