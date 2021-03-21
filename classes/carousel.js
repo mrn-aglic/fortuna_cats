@@ -14,7 +14,7 @@ export class Carousel {
         const self = this;
         cats.observe((state, event) => {
             if (cats.isRemoveEvent(event)) {
-                self.removeSlide(state);
+                self.updateCarousel(state);
             }
         });
 
@@ -166,44 +166,43 @@ export class Carousel {
         }
     }
 
-    removeSlide(state) {
+    updateCarousel(state) {
         const result = state.result;
         for (let cat of result) {
-
             const id = cat.id;
             const btn = this.carousel.querySelector(`[data-id="${id}"]`);
-
-            if (btn == null) return;
-
+            if (btn === null) return;
             const slide = btn.closest('.slide');
-
             if (slide === null) return;
 
-            this.carousel.removeChild(slide);
+            const newCat = this.loadNewCat();
+            const newSlide = this.createSlide(newCat);
+            this.updateSlides(slide, newSlide);
+        }
+    }
 
-            const slides = this.carousel.getElementsByClassName('slide');
+    loadNewCat() {
+        const slideIds = [...this.carousel.querySelectorAll('[data-id]')]
+            .map(el => parseInt(el.getAttribute('data-id')));
+        const slideCats = this.cats.getYoungestAfter(slideIds);
+        return slideCats[0];
+    }
 
-            this.removePreview(this.left);
-            this.removePreview(this.right);
+    updateSlides(slide, newSlide) {
+        this.carousel.removeChild(slide);
 
-            if (slides.length < 3) {
-                const nextActive = this.right;
-
-                if (this.left !== nextActive) {
-                    this.carousel.appendChild(this.left);
-                }
-                this.right = this.left;
-                this.current = nextActive;
-
-                this.refreshDisplay()
-            } else {
-                const nextActive = this.right;
-                const nextRight = nextActive.nextElementSibling;
-                this.current = nextActive;
-                this.right = nextRight;
-
-                this.display(this.current, this.left, this.right);
+        if (this.left === slide) {
+            this.carousel.insertBefore(newSlide, this.current);
+            this.left = newSlide;
+            this.leftPreview(newSlide);
+        } else {
+            this.carousel.appendChild(newSlide);
+            if (this.current === slide) {
+                this.current = this.right;
             }
+            this.right = this.current.nextElementSibling;
+            this.rightPreview(this.right);
+            this.setActive(this.current);
         }
     }
 

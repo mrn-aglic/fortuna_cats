@@ -152,7 +152,6 @@ export class CardsContainer {
         const loaded = this.getNextForPredicate(start, num, p);
         this.appendCats(loaded);
 
-        // možda poslat obavijest o tome koliko mačića je dodano. Pa ako je 0 ispisat poruku o tome
         this.loadClicks += 1;
     }
 

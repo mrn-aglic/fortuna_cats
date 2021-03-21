@@ -53,7 +53,7 @@ export class Cats {
         return event === this.events.filter;
     }
 
-    isLoadMoreEvent(event){
+    isLoadMoreEvent(event) {
         return event === this.events.loadMore;
     }
 
@@ -103,9 +103,9 @@ export class Cats {
     loadMore(from, num) {
         const result = this.getNextForPredicate(from, num, this.state.predicate);
         this.updateState({
-           result: result,
-           allCats: this.cats(),
-           predicate: this.state.predicate
+            result: result,
+            allCats: this.cats(),
+            predicate: this.state.predicate
         });
 
         this.notifyObservers(this.events.loadMore);
@@ -114,6 +114,10 @@ export class Cats {
 
     getSize() {
         return this.cats().length;
+    }
+
+    getYoungestAfter(ids) {
+        return this.cats().filter(c => !ids.includes(c.id));
     }
 
     getNext(from, end) {
